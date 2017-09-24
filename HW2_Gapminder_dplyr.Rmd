@@ -1,18 +1,14 @@
 ---
 title: "HW2 Gapminder Exploration Using Package(dplyr)"
-output: html_document
+output: rmarkdown::github_document
 ---
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
 
 ## Pre-Work
 
 - #### Load packages
 
 Load the necessary package (assuming you have installed them)
-```{r}
+```{r message=FALSE}
 library(dplyr)
 library(gapminder)
 library(ggplot2)
@@ -22,8 +18,9 @@ library(tidyr)
 ## Get an overview
 
 - Is it a data.frame, a matrix, a vector, a list?
-  + data.frame
 
+  + data.frame
+  
 - What is its class?
   + `tbl_df`, `tbl` and `data.frame`
   
