@@ -1,6 +1,6 @@
 ---
 title: "HW2 Gapminder Exploration Using Package(dplyr)"
-output: rmarkdown::github_document
+output: html_document
 ---
 
 ```{r setup, include=FALSE}
@@ -57,12 +57,13 @@ class(gapminder)
 
 - #### Pick the categorical variable: `continent`:
   + What are possible values (or range, whichever is appropriate) of the variable?
+    * Possible values are `Africa`, `Americas`, `Asia`, `Europe`, and `Oceania`. 
 ```{r}
 summary(gapminder$continent)
 str(gapminder$continent)
 ```
-  + What values are typical? What is the spread? What is the distribution? Etc., tailored to the variable at hand.
-    * Among 5 continents, Africa appears the highest times (624), Oceania appears the lowest times(24)
+  + What values are typical? 
+    * Among 5 continents, `Africa` appears the highest times (624), `Oceania` appears the lowest times(24)
 
   + Feel free to use summary stats, tables, figures.
 ```{r}
@@ -76,55 +77,48 @@ gapminder %>%
 - #### Pick the quantitative variable: `pop`.
 
   + What are possible values (or range, whichever is appropriate) of the variable?
-The range of variable pop is from min = 6.001e+04 to max = 1.319e+09
-
+    * The range of variable pop is from min = 6.001e+04 to max = 1.319e+09, all values in between them are possible values.
 ```{r}
 summary(gapminder$pop)
 ```
-  + What values are typical? What is the spread? What is the distribution? Etc., tailored to the variable at hand.
-From the histogram, it can be seem the frequency between 0 to 1e+08 is highest, so the values falls within [0,1e+08] are typical. 
-
-In order to find the distribution, because previous histogram is right skewed, so I took the log on the variable `pop` and compare with the normal distribution, surprisingly, they look similar, so it is reasonable to asusme the log of the variable "pop" follows a normal distribution. 
+  + What values are typical? What is the spread? What is the distribution?
+  
+    * From the histogram, it can be seem the frequency between 0 to 1e+08 is highest, so the values falls within [0,1e+08] are typical. 
+    * The sd of the variable is 1.06e+8, and the IQR of the variable is 1.67e+7.
+    * In order to find the distribution, because previous histogram is right skewed, so I took the log on the variable `pop` and compare with the normal distribution, surprisingly, they look similar, so it is reasonable to asusme the log of the variable `pop` follows a normal distribution. 
+    
 ```{r}
-filter(gapminder, pop < 2e+7) %>%
-  select(pop) %>%
-  boxplot(main = "Boxplot of the Variable Pop")
+sqrt(var(gapminder$pop))
+IQR(gapminder$pop)
 
-quantile(gapminder$pop, probs = seq(0, 1, 0.25))
-         
 hist(gapminder$pop)
 trans.pop <- log(gapminder$pop)
 hist(trans.pop, freq = FALSE, breaks = 14)
 curve(dnorm(x, mean=mean(trans.pop), sd=sd(trans.pop)), col="red", add=TRUE)
 ```
 
-
-    Feel free to use summary stats, tables, figures. We are NOT expecting high production value (yet).
+  + Feel free to use summary stats, tables, figures.
 ```{r}
-
+filter(gapminder, pop < 2e+7) %>%
+  select(pop) %>%
+  boxplot(main = "Boxplot of the Variable Pop")
 ```
-
 
 - #### Pick the quantitative variable: `year`:
   + What are possible values (or range, whichever is appropriate) of the variable?
-The 12 possible values of year are: 1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 2002 2007.
+    * Even though this is a numeric variable, it only contains 12 possible values of year: 1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 2002 2007.
 ```{r}
 unique(gapminder$year)
 n_distinct(gapminder$year)
 ```
-  + What values are typical? What’s the spread? What’s the distribution? Etc., tailored to the variable at hand.
-All years are evenly spread because all years have the same number of occurrences, so the distribution might be uniform if we consider year as continuous random variable.  
+  + What values are typical? What is the spread? What is the distribution? 
+    * All years are evenly spread because all years have the same number of occurrences, so the distribution might be uniform if we consider year as continuous random variable.  
 ```{r}
 table(gapminder$year)
 ```
 
-  + Feel free to use summary stats, tables, figures.
-```{r}
-hist(gapminder$year)
-```
 
 ## Explore various plot types
-
 
 - #### Scatterplot of two quantitative variables.
 
