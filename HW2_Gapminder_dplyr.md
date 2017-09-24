@@ -4,7 +4,7 @@ HW2 Gapminder Exploration Using Package(dplyr)
 Pre-Work
 --------
 
--   #### Load packages
+#### Load packages
 
 Load the necessary package (assuming you have installed them)
 
@@ -18,22 +18,24 @@ library(tidyr)
 Get an overview
 ---------------
 
--   Is it a data.frame, a matrix, a vector, a list?
+#### Is it a data.frame, a matrix, a vector, a list?
 
-data.frame
+-   data.frame
 
--   Bichon Frise
+#### What is its class?
 
--   What is its class?
 -   `tbl_df`, `tbl` and `data.frame`
 
--   How many variables/columns?
+#### How many variables/columns?
+
 -   6 variables/columns
 
--   How many rows/observations?
+#### How many rows/observations?
+
 -   1704 obs.
 
--   What data type of each variable?
+#### What data type of each variable?
+
 -   variable of `country`: factor
 -   variable of `continent`: factor
 -   variable of `year`: int
@@ -53,7 +55,8 @@ str(gapminder)
     ##  $ pop      : int  8425333 9240934 10267083 11537966 13079460 14880372 12881816 13867957 16317921 22227415 ...
     ##  $ gdpPercap: num  779 821 853 836 740 ...
 
--   Can you get these facts about `extent` or `size` in more than one way? Can you imagine different functions being useful in different contexts?
+#### Can you get these facts about `extent` or `size` in more than one way? Can you imagine different functions being useful in different contexts?
+
 -   Other ways: see below. str() can be used when wanting to have an idea of the dataset. dim() can be used when only care about the dimensions of the dataset; Inputting the name of the dataset can be a shortcut of dim(data) + head(data).
 
 ``` r
@@ -90,7 +93,7 @@ class(gapminder)
 Explore Individual Variables
 ----------------------------
 
--   #### Pick the categorical variable: `continent`:
+#### Pick the categorical variable: `continent`:
 
 -   What are possible values (or range, whichever is appropriate) of the variable?
     -   Possible values are `Africa`, `Americas`, `Asia`, `Europe`, and `Oceania`.
@@ -113,7 +116,10 @@ str(gapminder$continent)
 -   Feel free to use summary stats, tables, figures.
 
 ``` r
-plot(gapminder$continent)
+plot(gapminder$continent, 
+     main = "Histogram of continents", 
+     xlab = "Continent name",
+     ylab = "# of Occurances")
 ```
 
 ![](HW2_Gapminder_dplyr_files/figure-markdown_github/unnamed-chunk-5-1.png)
@@ -134,7 +140,7 @@ gapminder %>%
     ## 4    Europe   360 0.21126761
     ## 5   Oceania    24 0.01408451
 
--   #### Pick the quantitative variable: `pop`.
+#### Pick the quantitative variable: `pop`.
 
 -   What are possible values (or range, whichever is appropriate) of the variable?
     -   The range of variable pop is from min = 6.001e+04 to max = 1.319e+09, all values in between them are possible values.
@@ -165,14 +171,21 @@ IQR(gapminder$pop)
     ## [1] 16791558
 
 ``` r
-hist(gapminder$pop)
+hist(gapminder$pop,
+     main = "Histogram of population", 
+     xlab = "bin width",
+     ylab = "population within the bin")
 ```
 
 ![](HW2_Gapminder_dplyr_files/figure-markdown_github/unnamed-chunk-7-1.png)
 
 ``` r
 trans.pop <- log(gapminder$pop)
-hist(trans.pop, freq = FALSE, breaks = 14)
+
+hist(trans.pop, freq = FALSE, breaks = 14,     
+     main = "Histogram of log(population)'s density", 
+     xlab = "bin width",
+     ylab = "population density within the bin")
 curve(dnorm(x, mean=mean(trans.pop), sd=sd(trans.pop)), col="red", add=TRUE)
 ```
 
@@ -188,10 +201,11 @@ filter(gapminder, pop < 2e+7) %>%
 
 ![](HW2_Gapminder_dplyr_files/figure-markdown_github/unnamed-chunk-8-1.png)
 
--   #### Pick the quantitative variable: `year`:
+#### Pick the quantitative variable: `year`:
 
 -   What are possible values (or range, whichever is appropriate) of the variable?
-    -   Even though this is a numeric variable, it only contains 12 possible values of year: 1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 2002 2007.
+
+-   Even though this is a numeric variable, it only contains 12 possible values of year: 1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 2002 2007.
 
 ``` r
 unique(gapminder$year)
@@ -206,7 +220,8 @@ n_distinct(gapminder$year)
     ## [1] 12
 
 -   What values are typical? What is the spread? What is the distribution?
-    -   All years are evenly spread because all years have the same number of occurrences, so the distribution might be uniform if we consider year as continuous random variable.
+
+-   All years are evenly spread because all years have the same number of occurrences, so the distribution might be uniform if we consider year as continuous random variable.
 
 ``` r
 table(gapminder$year)
@@ -219,7 +234,7 @@ table(gapminder$year)
 Explore various plot types
 --------------------------
 
--   #### Scatterplot of two quantitative variables.
+#### Scatterplot of two quantitative variables.
 
 -   Scatterplot of `year` vs `lifeExp`, choosing the level of alpha transparency to be 0.7, and separating the continents using different colors, and sizing the points based on the relevant population.
 
@@ -229,7 +244,8 @@ gapminder %>%
   geom_point(alpha= 0.7, aes(col = continent)) +
   xlab("Year") +
   ylab("Life expectancy") +
-  ggtitle("Scatterplot of year vs lifeExp, colored by continents and sized by corresponding population")
+  ggtitle("Scatterplot of year vs lifeExp, colored by continents and sized by corresponding population") +
+  theme(plot.title = element_text(hjust = 0.5))
 ```
 
 ![](HW2_Gapminder_dplyr_files/figure-markdown_github/unnamed-chunk-11-1.png)
@@ -243,7 +259,8 @@ gapminder %>%
   geom_text(size=3, alpha = 0.9) + 
   xlab("Life expectancy") +
   ylab("GDP per capita") +
-  ggtitle("Scatterplot of lifeExp vs gdpPercap in 2007, separated by continents")
+  ggtitle("Scatterplot of lifeExp vs gdpPercap in 2007, separated by continents") +
+  theme(plot.title = element_text(hjust = 0.5))
 ```
 
 ![](HW2_Gapminder_dplyr_files/figure-markdown_github/unnamed-chunk-12-1.png)
@@ -258,12 +275,13 @@ gapminder %>%
   geom_smooth(aes(linetype = country), color = "green", method = "lm") +
   xlab("GDP per capita") + 
   ylab("Population") +   
-  ggtitle("Linear models fitting gdpPercap vs pop in the continent of Oceania, separated by contries, colored by years.")
+  ggtitle("Linear models fitting gdpPercap vs pop in the continent of Oceania, separated by contries, colored by years.") +
+  theme(plot.title = element_text(hjust = 0.5))
 ```
 
 ![](HW2_Gapminder_dplyr_files/figure-markdown_github/unnamed-chunk-13-1.png)
 
--   #### Plot of one quantitative variable. Maybe a histogram or densityplot or frequency polygon.
+#### Plot of one quantitative variable. Maybe a histogram or densityplot or frequency polygon.
 
 -   Histograms of lifeExp, log(gdpPercap), and log(pop).
 
@@ -278,9 +296,10 @@ gathered.gap %>%
   ggplot(aes(value)) + 
   geom_histogram(bins=10, color = "darkseagreen4", fill = "darkseagreen3") +
   facet_wrap(~key, scales="free", nrow = 1) + 
-  xlab("log of corresponding value") +
+  xlab("Corresponding value of either log-transformed or untransformed") +
   ylab("frequency") +
-  ggtitle("Histogram of three continous variabales: `GDP per capita`, `life expectancy`, and `population`")
+  ggtitle("Histogram of three continous variabales: `GDP per capita`, `life expectancy`, and `population`") +
+  theme(plot.title = element_text(hjust = 0.5))
 ```
 
 ![](HW2_Gapminder_dplyr_files/figure-markdown_github/unnamed-chunk-14-1.png)
@@ -293,12 +312,13 @@ gapminder %>%
   geom_density(aes(fill = continent), alpha = 0.9, position = "stack") +
   xlab("GDP per capita") +
   ylab("Density") +
-  ggtitle("Density curve of GDP per capita, contributed by each continent")
+  ggtitle("Density curve of GDP per capita, contributed by each continent") +
+  theme(plot.title = element_text(hjust = 0.5))
 ```
 
 ![](HW2_Gapminder_dplyr_files/figure-markdown_github/unnamed-chunk-15-1.png)
 
--   #### A plot of one quantitative variable and one categorical. Maybe boxplots for several continents or countries.
+#### Plot of one quantitative variable and one categorical. Maybe boxplots for several continents or countries.
 
 -   Boxplots of `gdpPercap` separated by continents
 
@@ -309,7 +329,8 @@ gapminder %>%
   geom_boxplot(varwidth= T, aes(fill = continent), alpha = 0.6) +
   xlab("Continent") +
   ylab("GDP per capita") +
-  ggtitle("Boxplots of GDP per capita, separated by continents")
+  ggtitle("Boxplots of GDP per capita, separated by continents") +
+  theme(plot.title = element_text(hjust = 0.5))
 ```
 
 ![](HW2_Gapminder_dplyr_files/figure-markdown_github/unnamed-chunk-16-1.png)
@@ -366,7 +387,8 @@ gapminder %>%
   filter(country %in% c("United States","France", "Japan", "China"), year == 2007) %>%
   ggplot(aes(x= country, y = gdpPercap)) + 
   geom_boxplot() +
-  ggtitle("Problem encountered when doing boxplot")
+  ggtitle("Problem encountered when doing boxplot") +
+  theme(plot.title = element_text(hjust = 0.5))
 ```
 
 ![](HW2_Gapminder_dplyr_files/figure-markdown_github/unnamed-chunk-18-1.png)

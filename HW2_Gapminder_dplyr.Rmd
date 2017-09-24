@@ -5,7 +5,7 @@ output: rmarkdown::github_document
 
 ## Pre-Work
 
-- #### Load packages
+#### Load packages
 
 Load the necessary package (assuming you have installed them)
 ```{r message=FALSE}
@@ -17,20 +17,24 @@ library(tidyr)
 
 ## Get an overview
 
-- Is it a data.frame, a matrix, a vector, a list?
+#### Is it a data.frame, a matrix, a vector, a list?
 
   + data.frame
   
-- What is its class?
+#### What is its class?
+
   + `tbl_df`, `tbl` and `data.frame`
   
-- How many variables/columns?
+#### How many variables/columns?
+
   + 6 variables/columns
   
-- How many rows/observations?
+#### How many rows/observations?
+
   + 1704 obs.
 
-- What data type of each variable?
+#### What data type of each variable?
+
   + variable of `country`: factor
   + variable of `continent`: factor
   + variable of `year`: int
@@ -42,7 +46,8 @@ library(tidyr)
 str(gapminder)
 ```
 
-- Can you get these facts about `extent` or `size` in more than one way? Can you imagine different functions being useful in different contexts?
+#### Can you get these facts about `extent` or `size` in more than one way? Can you imagine different functions being useful in different contexts?
+
   + Other ways: see below. str() can be used when wanting to have an idea of the dataset. dim() can be used when only care about the dimensions of the dataset; Inputting the name of the dataset can be a shortcut of dim(data) + head(data).
   
 ```{r}
@@ -52,7 +57,7 @@ class(gapminder)
 ```
 ##Explore Individual Variables
 
-- #### Pick the categorical variable: `continent`:
+#### Pick the categorical variable: `continent`:
   + What are possible values (or range, whichever is appropriate) of the variable?
     * Possible values are `Africa`, `Americas`, `Asia`, `Europe`, and `Oceania`. 
 ```{r}
@@ -63,15 +68,18 @@ str(gapminder$continent)
     * Among 5 continents, `Africa` appears the highest times (624), `Oceania` appears the lowest times(24)
 
   + Feel free to use summary stats, tables, figures.
-```{r}
-plot(gapminder$continent)
+```{r, fig.width=5, fig.height=4}
+plot(gapminder$continent, 
+     main = "Histogram of continents", 
+     xlab = "Continent name",
+     ylab = "# of Occurances")
 gapminder %>%
     group_by(continent) %>%
     summarise (n = n()) %>%
     mutate(freq = n / sum(n))
 ```
 
-- #### Pick the quantitative variable: `pop`.
+#### Pick the quantitative variable: `pop`.
 
   + What are possible values (or range, whichever is appropriate) of the variable?
     * The range of variable pop is from min = 6.001e+04 to max = 1.319e+09, all values in between them are possible values.
@@ -84,32 +92,44 @@ summary(gapminder$pop)
     * The sd of the variable is 1.06e+8, and the IQR of the variable is 1.67e+7.
     * In order to find the distribution, because previous histogram is right skewed, so I took the log on the variable `pop` and compare with the normal distribution, surprisingly, they look similar, so it is reasonable to asusme the log of the variable `pop` follows a normal distribution. 
     
-```{r}
+```{r, fig.width=5, fig.height=4}
 sqrt(var(gapminder$pop))
 IQR(gapminder$pop)
 
-hist(gapminder$pop)
+hist(gapminder$pop,
+     main = "Histogram of population", 
+     xlab = "bin width",
+     ylab = "population within the bin")
 trans.pop <- log(gapminder$pop)
-hist(trans.pop, freq = FALSE, breaks = 14)
+
+hist(trans.pop, freq = FALSE, breaks = 14,     
+     main = "Histogram of log(population)'s density", 
+     xlab = "bin width",
+     ylab = "population density within the bin")
 curve(dnorm(x, mean=mean(trans.pop), sd=sd(trans.pop)), col="red", add=TRUE)
 ```
 
   + Feel free to use summary stats, tables, figures.
-```{r}
+```{r, fig.width=5, fig.height=4}
 filter(gapminder, pop < 2e+7) %>%
   select(pop) %>%
   boxplot(main = "Boxplot of the Variable Pop")
 ```
 
-- #### Pick the quantitative variable: `year`:
+#### Pick the quantitative variable: `year`:
+
   + What are possible values (or range, whichever is appropriate) of the variable?
-    * Even though this is a numeric variable, it only contains 12 possible values of year: 1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 2002 2007.
+
+  * Even though this is a numeric variable, it only contains 12 possible values of year: 1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 2002 2007.
+
 ```{r}
 unique(gapminder$year)
 n_distinct(gapminder$year)
 ```
   + What values are typical? What is the spread? What is the distribution? 
-    * All years are evenly spread because all years have the same number of occurrences, so the distribution might be uniform if we consider year as continuous random variable.  
+
+  * All years are evenly spread because all years have the same number of occurrences, so the distribution might be uniform if we consider year as continuous random variable.  
+    
 ```{r}
 table(gapminder$year)
 ```
@@ -117,7 +137,7 @@ table(gapminder$year)
 
 ## Explore various plot types
 
-- #### Scatterplot of two quantitative variables.
+#### Scatterplot of two quantitative variables.
 
   + Scatterplot of `year` vs `lifeExp`, choosing the level of alpha transparency to be 0.7, and separating the continents using different colors, and sizing the points based on the relevant population.
 ```{r, fig.width=9,fig.height=5}
@@ -126,7 +146,8 @@ gapminder %>%
   geom_point(alpha= 0.7, aes(col = continent)) +
   xlab("Year") +
   ylab("Life expectancy") +
-  ggtitle("Scatterplot of year vs lifeExp, colored by continents and sized by corresponding population")
+  ggtitle("Scatterplot of year vs lifeExp, colored by continents and sized by corresponding population") +
+  theme(plot.title = element_text(hjust = 0.5))
 ```
 
   + Scatterplot of `lifeExp` vs `gdpPercap` in the year of 2007, choosing the level of alpha transparency to be 0.9, and separating the continents using different colors, and label each point using its continent name.
@@ -137,7 +158,8 @@ gapminder %>%
   geom_text(size=3, alpha = 0.9) + 
   xlab("Life expectancy") +
   ylab("GDP per capita") +
-  ggtitle("Scatterplot of lifeExp vs gdpPercap in 2007, separated by continents")
+  ggtitle("Scatterplot of lifeExp vs gdpPercap in 2007, separated by continents") +
+  theme(plot.title = element_text(hjust = 0.5))
 ```
 
   + Linear models fitting `gdpPercap` vs `pop` in Oceania, separated by countries using different shapes of points, which colored by the year.
@@ -150,10 +172,11 @@ gapminder %>%
   geom_smooth(aes(linetype = country), color = "green", method = "lm") +
   xlab("GDP per capita") + 
   ylab("Population") +   
-  ggtitle("Linear models fitting gdpPercap vs pop in the continent of Oceania, separated by contries, colored by years.")
+  ggtitle("Linear models fitting gdpPercap vs pop in the continent of Oceania, separated by contries, colored by years.") +
+  theme(plot.title = element_text(hjust = 0.5))
 ```
 
-- #### Plot of one quantitative variable. Maybe a histogram or densityplot or frequency polygon.
+#### Plot of one quantitative variable. Maybe a histogram or densityplot or frequency polygon.
 
   + Histograms of lifeExp, log(gdpPercap), and log(pop).
 ```{r, fig.width=12,fig.height=4}
@@ -167,9 +190,10 @@ gathered.gap %>%
   ggplot(aes(value)) + 
   geom_histogram(bins=10, color = "darkseagreen4", fill = "darkseagreen3") +
   facet_wrap(~key, scales="free", nrow = 1) + 
-  xlab("log of corresponding value") +
+  xlab("Corresponding value of either log-transformed or untransformed") +
   ylab("frequency") +
-  ggtitle("Histogram of three continous variabales: `GDP per capita`, `life expectancy`, and `population`")
+  ggtitle("Histogram of three continous variabales: `GDP per capita`, `life expectancy`, and `population`") +
+  theme(plot.title = element_text(hjust = 0.5))
 ```
 
   + Density plot of gdpPercap, contributed by each continent
@@ -179,10 +203,11 @@ gapminder %>%
   geom_density(aes(fill = continent), alpha = 0.9, position = "stack") +
   xlab("GDP per capita") +
   ylab("Density") +
-  ggtitle("Density curve of GDP per capita, contributed by each continent")
+  ggtitle("Density curve of GDP per capita, contributed by each continent") +
+  theme(plot.title = element_text(hjust = 0.5))
 ```
 
-- #### A plot of one quantitative variable and one categorical. Maybe boxplots for several continents or countries.
+#### Plot of one quantitative variable and one categorical. Maybe boxplots for several continents or countries.
   + Boxplots of `gdpPercap` separated by continents
 ```{r, fig.width=9,fig.height=4}
 gapminder %>%
@@ -191,7 +216,8 @@ gapminder %>%
   geom_boxplot(varwidth= T, aes(fill = continent), alpha = 0.6) +
   xlab("Continent") +
   ylab("GDP per capita") +
-  ggtitle("Boxplots of GDP per capita, separated by continents")
+  ggtitle("Boxplots of GDP per capita, separated by continents") +
+  theme(plot.title = element_text(hjust = 0.5))
 ```
 
   + Compare the `gdpPercap` each year between US and Canada
@@ -235,7 +261,8 @@ gapminder %>%
   filter(country %in% c("United States","France", "Japan", "China"), year == 2007) %>%
   ggplot(aes(x= country, y = gdpPercap)) + 
   geom_boxplot() +
-  ggtitle("Problem encountered when doing boxplot")
+  ggtitle("Problem encountered when doing boxplot") +
+  theme(plot.title = element_text(hjust = 0.5))
 ```
 
 - #### What things were hard, even though you saw them in class? What was easy(-ish) even though we haven’t done it in class?
