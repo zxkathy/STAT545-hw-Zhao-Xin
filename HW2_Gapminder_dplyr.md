@@ -221,7 +221,7 @@ n_distinct(gapminder$year)
 
 -   What values are typical? What is the spread? What is the distribution?
 
--   All years are evenly spread because all years have the same number of occurrences, so the distribution might be uniform if we consider year as continuous random variable.
+-   All possible values of years have the same occurances. i.e. are evenly spread because all years have the same number of occurrences, so the distribution might be uniform if we consider year as continuous random variable. In terms of spread, the sd of year is 17.265 and the IQR of the var `year` is 27.5.
 
 ``` r
 table(gapminder$year)
@@ -230,6 +230,18 @@ table(gapminder$year)
     ## 
     ## 1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 2002 2007 
     ##  142  142  142  142  142  142  142  142  142  142  142  142
+
+``` r
+sqrt(var(gapminder$year))
+```
+
+    ## [1] 17.26533
+
+``` r
+IQR(gapminder$year)
+```
+
+    ## [1] 27.5
 
 Explore various plot types
 --------------------------
