@@ -194,7 +194,7 @@ gathered.gap %>%
   facet_wrap(~key, scales="free", nrow = 1) + 
   xlab("Corresponding value of either log-transformed or untransformed") +
   ylab("frequency") +
-  ggtitle("Histogram of three continous variabales: `GDP per capita`, `life expectancy`, and `population`") +
+  ggtitle("Histogram of three continous variabales: GDP per capita, life expectancy, and population") +
   theme(plot.title = element_text(hjust = 0.5))
 ```
 
