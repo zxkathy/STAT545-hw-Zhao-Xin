@@ -37,7 +37,10 @@ knitr::kable(tbl1)
 ``` r
 tbl1 %>%
   ggplot(aes(x= continent, y = medianGDP, color=continent)) + 
-  geom_crossbar(aes(ymin  = minGDP, ymax = maxGDP), position = "dodge", width = 0.45)
+  geom_crossbar(aes(ymin  = minGDP, ymax = maxGDP), position = "dodge", width = 0.45) +
+  xlab("Continent") +
+  ylab("GDP per capita") +
+  ggtitle("Range of GDP per capita separated by continent")
 ```
 
 ![](HW3_Gapminder_dplyr_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-3-1.png)
@@ -45,7 +48,7 @@ tbl1 %>%
 2. Look at the spread of GDP per capita within the continents.
 --------------------------------------------------------------
 
-Look at the sd
+Look at the IQR
 
 ``` r
 tbl2 <-
@@ -68,7 +71,10 @@ knitr::kable(tbl2)
 ``` r
 gapminder %>%
   ggplot(aes(x= continent, y = gdpPercap, color=continent)) + 
-  geom_boxplot()
+  geom_boxplot() +
+  xlab("Continent") +
+  ylab("GDP per capita") +
+  ggtitle("Boxplot of GDP per capita separated by continent")
 ```
 
 ![](HW3_Gapminder_dplyr_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-5-1.png)
@@ -107,7 +113,10 @@ gapminder %>%
   mutate(totPop = sum(as.numeric(pop)), 
          weighted_lifeE = weighted.mean(lifeExp, pop)) %>%
   ggplot(aes(x = year, y = weighted_lifeE, size = totPop)) +
-  geom_point()
+  geom_point()+
+  xlab("Year") +
+  ylab("Weighted life expectancy with the weight of population") +
+  ggtitle("Population-weighted life expectancy changes over time")
 ```
 
 ![](HW3_Gapminder_dplyr_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-7-1.png)
@@ -160,7 +169,10 @@ tbl4 %>%
   ggplot(aes(x = year, y = lifeExp)) + 
   facet_wrap(~continent) + 
   geom_point(alpha = 0.35, color = "dark blue") + 
-  geom_smooth(method = "loess")
+  geom_smooth(method = "loess") +
+  xlab("Year") +
+  ylab("Life expectancy") +
+  ggtitle("Life expectancy changes over time for each continent")
 ```
 
 ![](HW3_Gapminder_dplyr_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-10-1.png)
@@ -175,10 +187,10 @@ tbl5 <-
   gapminder %>%
   group_by(continent, year) %>% 
   mutate(NumOfCountries = n(), shareOfThisCountry = 1/NumOfCountries) %>%
-  filter(lifeExp <= benchmark) %>%
+  filter(lifeExp < benchmark) %>%
   summarise(n = n(), perCen = sum(shareOfThisCountry))
 
-knitr::kable(tbl5)
+knitr::kable(head(tbl5))
 ```
 
 | continent |  year|    n|     perCen|
@@ -189,46 +201,14 @@ knitr::kable(tbl5)
 | Africa    |  1967|   50|  0.9615385|
 | Africa    |  1972|   50|  0.9615385|
 | Africa    |  1977|   50|  0.9615385|
-| Africa    |  1982|   44|  0.8461538|
-| Africa    |  1987|   40|  0.7692308|
-| Africa    |  1992|   39|  0.7500000|
-| Africa    |  1997|   39|  0.7500000|
-| Africa    |  2002|   41|  0.7884615|
-| Africa    |  2007|   40|  0.7692308|
-| Americas  |  1952|   19|  0.7600000|
-| Americas  |  1957|   15|  0.6000000|
-| Americas  |  1962|   13|  0.5200000|
-| Americas  |  1967|   11|  0.4400000|
-| Americas  |  1972|   10|  0.4000000|
-| Americas  |  1977|    7|  0.2800000|
-| Americas  |  1982|    5|  0.2000000|
-| Americas  |  1987|    2|  0.0800000|
-| Americas  |  1992|    2|  0.0800000|
-| Americas  |  1997|    1|  0.0400000|
-| Americas  |  2002|    1|  0.0400000|
-| Asia      |  1952|   29|  0.8787879|
-| Asia      |  1957|   27|  0.8181818|
-| Asia      |  1962|   25|  0.7575758|
-| Asia      |  1967|   25|  0.7575758|
-| Asia      |  1972|   19|  0.5757576|
-| Asia      |  1977|   14|  0.4242424|
-| Asia      |  1982|   12|  0.3636364|
-| Asia      |  1987|    8|  0.2424242|
-| Asia      |  1992|    7|  0.2121212|
-| Asia      |  1997|    6|  0.1818182|
-| Asia      |  2002|    4|  0.1212121|
-| Asia      |  2007|    3|  0.0909091|
-| Europe    |  1952|    7|  0.2333333|
-| Europe    |  1957|    3|  0.1000000|
-| Europe    |  1962|    1|  0.0333333|
-| Europe    |  1967|    1|  0.0333333|
-| Europe    |  1972|    1|  0.0333333|
-| Europe    |  1977|    1|  0.0333333|
 
 ``` r
 tbl5 %>%
   ggplot(aes(x= year, y = perCen, group= continent, color= continent)) +
-  geom_line()
+  geom_line() +
+  xlab("Year") +
+  ylab("Percentage of countries whose life expectancy below benchmark(60)") +
+  ggtitle("Each continent's below-benchmark country percentage over time")
 ```
 
 ![](HW3_Gapminder_dplyr_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-12-1.png)
@@ -251,72 +231,26 @@ tbl6 <-
   summarise(totPop = sum(as.numeric(pop))) %>%
   mutate(delta = delta(totPop)) %>%
   na.omit()
-knitr::kable(tbl6)
+knitr::kable(head(tbl6))
 ```
 
-| continent |  year|      totPop|      delta|
-|:----------|-----:|-----------:|----------:|
-| Africa    |  1957|   264837738|   27197237|
-| Africa    |  1962|   296516865|   31679127|
-| Africa    |  1967|   335289489|   38772624|
-| Africa    |  1972|   379879541|   44590052|
-| Africa    |  1977|   433061021|   53181480|
-| Africa    |  1982|   499348587|   66287566|
-| Africa    |  1987|   574834110|   75485523|
-| Africa    |  1992|   659081517|   84247407|
-| Africa    |  1997|   743832984|   84751467|
-| Africa    |  2002|   833723916|   89890932|
-| Africa    |  2007|   929539692|   95815776|
-| Americas  |  1957|   386953916|   41801470|
-| Americas  |  1962|   433270254|   46316338|
-| Americas  |  1967|   480746623|   47476369|
-| Americas  |  1972|   529384210|   48637587|
-| Americas  |  1977|   578067699|   48683489|
-| Americas  |  1982|   630290920|   52223221|
-| Americas  |  1987|   682753971|   52463051|
-| Americas  |  1992|   739274104|   56520133|
-| Americas  |  1997|   796900410|   57626306|
-| Americas  |  2002|   849772762|   52872352|
-| Americas  |  2007|   898871184|   49098422|
-| Asia      |  1957|  1562780599|  167423248|
-| Asia      |  1962|  1696357182|  133576583|
-| Asia      |  1967|  1905662900|  209305718|
-| Asia      |  1972|  2150972248|  245309348|
-| Asia      |  1977|  2384513556|  233541308|
-| Asia      |  1982|  2610135582|  225622026|
-| Asia      |  1987|  2871220762|  261085180|
-| Asia      |  1992|  3133292191|  262071429|
-| Asia      |  1997|  3383285500|  249993309|
-| Asia      |  2002|  3601802203|  218516703|
-| Asia      |  2007|  3811953827|  210151624|
-| Europe    |  1957|   437890351|   19769505|
-| Europe    |  1962|   460355155|   22464804|
-| Europe    |  1967|   481178958|   20823803|
-| Europe    |  1972|   500635059|   19456101|
-| Europe    |  1977|   517164531|   16529472|
-| Europe    |  1982|   531266901|   14102370|
-| Europe    |  1987|   543094160|   11827259|
-| Europe    |  1992|   558142797|   15048637|
-| Europe    |  1997|   568944148|   10801351|
-| Europe    |  2002|   578223869|    9279721|
-| Europe    |  2007|   586098529|    7874660|
-| Oceania   |  1957|    11941976|    1255970|
-| Oceania   |  1962|    13283518|    1341542|
-| Oceania   |  1967|    14600414|    1316896|
-| Oceania   |  1972|    16106100|    1505686|
-| Oceania   |  1977|    17239000|    1132900|
-| Oceania   |  1982|    18394850|    1155850|
-| Oceania   |  1987|    19574415|    1179565|
-| Oceania   |  1992|    20919651|    1345236|
-| Oceania   |  1997|    22241430|    1321779|
-| Oceania   |  2002|    23454829|    1213399|
-| Oceania   |  2007|    24549947|    1095118|
+| continent |  year|     totPop|     delta|
+|:----------|-----:|----------:|---------:|
+| Africa    |  1957|  264837738|  27197237|
+| Africa    |  1962|  296516865|  31679127|
+| Africa    |  1967|  335289489|  38772624|
+| Africa    |  1972|  379879541|  44590052|
+| Africa    |  1977|  433061021|  53181480|
+| Africa    |  1982|  499348587|  66287566|
 
 ``` r
 tbl6 %>%
   ggplot(aes(x = year, y = delta, color = continent, group= continent)) +
   geom_line() + 
-  geom_point() 
+  geom_point() +
+  xlab("Year") +
+  ylab("Increase in the population") +
+  ggtitle("The increase in population over time separated by continent")
 ```
 
 ![](HW3_Gapminder_dplyr_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-14-1.png)
@@ -371,7 +305,10 @@ knitr::kable(tbl7)
 tbl7 %>%
   ggplot(aes(x = year, y = gdpIncPC, color = country)) + 
   geom_point() + 
-  geom_smooth(method = "lm")
+  geom_smooth(method = "lm")+
+  xlab("Year") +
+  ylab("Increase in the GDP per capita") +
+  ggtitle("Increase in the GDP per capita over time for country China and Japan")
 ```
 
 ![](HW3_Gapminder_dplyr_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-16-1.png)
