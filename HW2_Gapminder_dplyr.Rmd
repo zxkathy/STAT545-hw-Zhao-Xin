@@ -268,4 +268,4 @@ gapminder %>%
 ```
 
 - #### What things were hard, even though you saw them in class? What was easy(-ish) even though we haven’t done it in class?
-For me, how to make the code in the neat and clean way is hard. As my usual rule is as long as the code and graphs achive my goals, they are good. So my coding style and graph might not be that appealing and easy to read. However, now I have to spend some time to pender how to make the graphs more attractive, and
+For me, how to make the code in the neat and clean way is hard. As my usual rule is as long as the code and graphs achive my goals, they are good. So my coding style and graph might not be that appealing and easy to read. However, now I have to spend some time to pender how to make the graphs more attractive, and make the code easy to read. 
