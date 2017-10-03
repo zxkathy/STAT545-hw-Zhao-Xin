@@ -165,6 +165,10 @@ knitr::kable(head(tbl4))
 | Asia      |  1977|   38.438|
 
 ``` r
+# Due to the table is super long, we just display the head of the table
+```
+
+``` r
 tbl4 %>%
   ggplot(aes(x = year, y = lifeExp)) + 
   facet_wrap(~continent) + 
@@ -201,6 +205,10 @@ knitr::kable(head(tbl5))
 | Africa    |  1967|   50|  0.9615385|
 | Africa    |  1972|   50|  0.9615385|
 | Africa    |  1977|   50|  0.9615385|
+
+``` r
+# Due to the table is super long, we just display the head of the table
+```
 
 ``` r
 tbl5 %>%
@@ -242,6 +250,10 @@ knitr::kable(head(tbl6))
 | Africa    |  1972|  379879541|  44590052|
 | Africa    |  1977|  433061021|  53181480|
 | Africa    |  1982|  499348587|  66287566|
+
+``` r
+# Due to the table is super long, we just display the head of the table
+```
 
 ``` r
 tbl6 %>%

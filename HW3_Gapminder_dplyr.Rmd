@@ -95,6 +95,7 @@ tbl4 <-
   gapminder %>%
   select(continent, year, lifeExp)
 knitr::kable(head(tbl4))
+# Due to the table is super long, we just display the head of the table
 ```
 ```{r}
 tbl4 %>%
@@ -120,6 +121,7 @@ tbl5 <-
   summarise(n = n(), perCen = sum(shareOfThisCountry))
 
 knitr::kable(head(tbl5))
+# Due to the table is super long, we just display the head of the table
 ```
 ```{r}
 tbl5 %>%
@@ -146,6 +148,7 @@ tbl6 <-
   mutate(delta = delta(totPop)) %>%
   na.omit()
 knitr::kable(head(tbl6))
+# Due to the table is super long, we just display the head of the table
 ```
 
 
