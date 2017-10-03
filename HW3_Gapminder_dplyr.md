@@ -15,8 +15,8 @@ library(ggplot2)
 library(tidyr)
 ```
 
-1. Get the maximum and minimum of GDP per capita for all continents.
---------------------------------------------------------------------
+1.Get the maximum and minimum of GDP per capita for all continents.
+-------------------------------------------------------------------
 
 ``` r
 tbl1 <- 
@@ -45,8 +45,8 @@ tbl1 %>%
 
 ![](HW3_Gapminder_dplyr_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-3-1.png)
 
-2. Look at the spread of GDP per capita within the continents.
---------------------------------------------------------------
+2.Look at the spread of GDP per capita within the continents.
+-------------------------------------------------------------
 
 Look at the IQR
 
@@ -79,8 +79,8 @@ gapminder %>%
 
 ![](HW3_Gapminder_dplyr_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-5-1.png)
 
-3. Compute a trimmed mean of life expectancy for different years. Or a weighted mean, weighting by population. Just try something other than the plain vanilla mean.
---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+3.Compute a trimmed mean of life expectancy for different years. Or a weighted mean, weighting by population. Just try something other than the plain vanilla mean.
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 ``` r
 # Weighted mean
@@ -177,8 +177,8 @@ tbl4 %>%
 
 ![](HW3_Gapminder_dplyr_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-10-1.png)
 
-5. Report the absolute and/or relative abundance of countries with low life expectancy over time by continent
--------------------------------------------------------------------------------------------------------------
+5.Report the absolute and/or relative abundance of countries with low life expectancy over time by continent
+------------------------------------------------------------------------------------------------------------
 
 ``` r
 #BenchMark: median of lifeExp
@@ -213,8 +213,8 @@ tbl5 %>%
 
 ![](HW3_Gapminder_dplyr_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-12-1.png)
 
-6. Make up your own: The absolute increase population
------------------------------------------------------
+6.Make up your own: The absolute increase population
+----------------------------------------------------
 
 The population increase is `pop` of the current year minus previous year, and group by continent and see whether the year increase differ by the continent.
 
@@ -255,8 +255,8 @@ tbl6 %>%
 
 ![](HW3_Gapminder_dplyr_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-14-1.png)
 
-7. Find countries with interesting stories.
--------------------------------------------
+7.Find countries with interesting stories.
+------------------------------------------
 
 I compare the GDP increase percentage between two countries. It can be seen China has an increasing GDP increase per capita, and Japan has a decreasing increase per capita.
 
