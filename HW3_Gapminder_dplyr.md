@@ -384,7 +384,7 @@ Report your process
 
 -   #### Problems you solved, helpful tutorials you read, etc.
 
--   When I was doing the weighted mean of lifeExp weighted by the population, I firstly wanted to add a column of the population weights, and manually calculated the weighted mean. After I did that, when I double checked my code, I was chanlleging myself: whether there is simpler way to do that? So I googled, and found yes! A really simple function: [weighted.mean()](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/weighted.mean.html). Samed as trimmed mean.
+    When I was doing the weighted mean of lifeExp weighted by the population, I firstly wanted to add a column of the population weights, and manually calculated the weighted mean. After I did that, when I double checked my code, I was chanlleging myself: whether there is simpler way to do that? So I googled, and found yes! A really simple function: [weighted.mean()](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/weighted.mean.html). Samed as trimmed mean.
 
 -   #### What things were hard, even though you saw them in class? What was easy(-ish) even though we haven’t done it in class?
 
