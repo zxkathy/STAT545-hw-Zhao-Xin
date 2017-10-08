@@ -23,16 +23,16 @@ tbl1 <-
   gapminder %>% 
   group_by(continent) %>% 
   summarise(minGDP = min(gdpPercap), medianGDP = median(gdpPercap), maxGDP = max(gdpPercap))
-knitr::kable(tbl1)
+knitr::kable(tbl1, digits = 2, align = "r", padding = 10)
 ```
 
-| continent |      minGDP|  medianGDP|     maxGDP|
-|:----------|-----------:|----------:|----------:|
-| Africa    |    241.1659|   1192.138|   21951.21|
-| Americas  |   1201.6372|   5465.510|   42951.65|
-| Asia      |    331.0000|   2646.787|  113523.13|
-| Europe    |    973.5332|  12081.749|   49357.19|
-| Oceania   |  10039.5956|  17983.304|   34435.37|
+|  continent|    minGDP|  medianGDP|     maxGDP|
+|----------:|---------:|----------:|----------:|
+|     Africa|    241.17|    1192.14|   21951.21|
+|   Americas|   1201.64|    5465.51|   42951.65|
+|       Asia|    331.00|    2646.79|  113523.13|
+|     Europe|    973.53|   12081.75|   49357.19|
+|    Oceania|  10039.60|   17983.30|   34435.37|
 
 ``` r
 tbl1 %>%
@@ -44,6 +44,8 @@ tbl1 %>%
 ```
 
 ![](HW3_Gapminder_dplyr_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-3-1.png)
+
+Note: The graph displaying max and min is not boxplot!
 
 2.Look at the spread of GDP per capita within the continents.
 -------------------------------------------------------------
@@ -57,16 +59,16 @@ tbl2 <-
   summarise(`25%Q`=quantile(gdpPercap, probs=0.25),
             `50%Q`=quantile(gdpPercap, probs=0.5),
             `75%Q`=quantile(gdpPercap, probs=0.75))
-knitr::kable(tbl2)
+knitr::kable(tbl2, digits = 2, align = "r", padding = 10)
 ```
 
-| continent |       25%Q|       50%Q|       75%Q|
-|:----------|----------:|----------:|----------:|
-| Africa    |    761.247|   1192.138|   2377.417|
-| Americas  |   3427.779|   5465.510|   7830.210|
-| Asia      |   1056.993|   2646.787|   8549.256|
-| Europe    |   7213.085|  12081.749|  20461.386|
-| Oceania   |  14141.859|  17983.304|  22214.117|
+|  continent|      25%Q|      50%Q|      75%Q|
+|----------:|---------:|---------:|---------:|
+|     Africa|    761.25|   1192.14|   2377.42|
+|   Americas|   3427.78|   5465.51|   7830.21|
+|       Asia|   1056.99|   2646.79|   8549.26|
+|     Europe|   7213.09|  12081.75|  20461.39|
+|    Oceania|  14141.86|  17983.30|  22214.12|
 
 ``` r
 gapminder %>%
@@ -79,6 +81,20 @@ gapminder %>%
 
 ![](HW3_Gapminder_dplyr_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-5-1.png)
 
+Since it is not quite clearly displayed with current settings of y-labs, I changed the y-labs to the log10 scale, and check it out!
+
+``` r
+gapminder %>%
+  ggplot(aes(x= continent, y = gdpPercap, color=continent)) + 
+  geom_boxplot() +
+  xlab("Continent") +
+  ylab("GDP per capita") + 
+  scale_y_log10() +
+  ggtitle("Boxplot of GDP per capita separated by continent")
+```
+
+![](HW3_Gapminder_dplyr_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-6-1.png)
+
 3.Compute a trimmed mean of life expectancy for different years. Or a weighted mean, weighting by population. Just try something other than the plain vanilla mean.
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -89,23 +105,23 @@ gapminder %>%
   mutate(weighted_lifeE = weighted.mean(lifeExp, pop)) %>%
   select(year, weighted_lifeE) %>%
   distinct(year, weighted_lifeE) %>%
-  knitr::kable()
+  knitr::kable(digits = 2, align = "r", padding = 10)
 ```
 
 |  year|  weighted\_lifeE|
 |-----:|----------------:|
-|  1952|         48.94424|
-|  1957|         52.12189|
-|  1962|         52.32438|
-|  1967|         56.98431|
-|  1972|         59.51478|
-|  1977|         61.23726|
-|  1982|         62.88176|
-|  1987|         64.41635|
-|  1992|         65.64590|
-|  1997|         66.84934|
-|  2002|         67.83904|
-|  2007|         68.91909|
+|  1952|            48.94|
+|  1957|            52.12|
+|  1962|            52.32|
+|  1967|            56.98|
+|  1972|            59.51|
+|  1977|            61.24|
+|  1982|            62.88|
+|  1987|            64.42|
+|  1992|            65.65|
+|  1997|            66.85|
+|  2002|            67.84|
+|  2007|            68.92|
 
 ``` r
 gapminder %>%
@@ -119,7 +135,7 @@ gapminder %>%
   ggtitle("Population-weighted life expectancy changes over time")
 ```
 
-![](HW3_Gapminder_dplyr_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-7-1.png)
+![](HW3_Gapminder_dplyr_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-8-1.png)
 
 ``` r
 # 10% Trimmed Mean: Remove the top and bottom 10% (#14) of data
@@ -127,23 +143,23 @@ gapminder %>%
   group_by(year) %>%
   mutate(trimed_mean = mean(lifeExp, trim = .1)) %>%
   distinct(year, trimed_mean) %>%
-  knitr::kable()
+  knitr::kable(digits = 2, align = "r", padding = 10)
 ```
 
 |  year|  trimed\_mean|
 |-----:|-------------:|
-|  1952|      48.57668|
-|  1957|      51.26888|
-|  1962|      53.58075|
-|  1967|      55.86538|
-|  1972|      58.01444|
-|  1977|      60.10206|
-|  1982|      62.11694|
-|  1987|      63.92106|
-|  1992|      65.18519|
-|  1997|      66.01736|
-|  2002|      66.71641|
-|  2007|      68.11489|
+|  1952|         48.58|
+|  1957|         51.27|
+|  1962|         53.58|
+|  1967|         55.87|
+|  1972|         58.01|
+|  1977|         60.10|
+|  1982|         62.12|
+|  1987|         63.92|
+|  1992|         65.19|
+|  1997|         66.02|
+|  2002|         66.72|
+|  2007|         68.11|
 
 4.How is life expectancy changing over time on different continents?
 --------------------------------------------------------------------
@@ -152,20 +168,31 @@ gapminder %>%
 tbl4 <- 
   gapminder %>%
   select(continent, year, lifeExp)
-knitr::kable(head(tbl4))
+tbl4 %>%
+  head(15) %>%
+  knitr::kable(digits = 2, align = "r", padding = 10)
 ```
 
-| continent |  year|  lifeExp|
-|:----------|-----:|--------:|
-| Asia      |  1952|   28.801|
-| Asia      |  1957|   30.332|
-| Asia      |  1962|   31.997|
-| Asia      |  1967|   34.020|
-| Asia      |  1972|   36.088|
-| Asia      |  1977|   38.438|
+|  continent|  year|  lifeExp|
+|----------:|-----:|--------:|
+|       Asia|  1952|    28.80|
+|       Asia|  1957|    30.33|
+|       Asia|  1962|    32.00|
+|       Asia|  1967|    34.02|
+|       Asia|  1972|    36.09|
+|       Asia|  1977|    38.44|
+|       Asia|  1982|    39.85|
+|       Asia|  1987|    40.82|
+|       Asia|  1992|    41.67|
+|       Asia|  1997|    41.76|
+|       Asia|  2002|    42.13|
+|       Asia|  2007|    43.83|
+|     Europe|  1952|    55.23|
+|     Europe|  1957|    59.28|
+|     Europe|  1962|    64.82|
 
 ``` r
-# Due to the table is super long, we just display the head of the table
+# Due to the table is super long, we just display the head 15 rows of the table
 ```
 
 ``` r
@@ -179,7 +206,7 @@ tbl4 %>%
   ggtitle("Life expectancy changes over time for each continent")
 ```
 
-![](HW3_Gapminder_dplyr_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-10-1.png)
+![](HW3_Gapminder_dplyr_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-11-1.png)
 
 5.Report the absolute and/or relative abundance of countries with low life expectancy over time by continent
 ------------------------------------------------------------------------------------------------------------
@@ -192,34 +219,46 @@ tbl5 <-
   group_by(continent, year) %>% 
   mutate(NumOfCountries = n(), shareOfThisCountry = 1/NumOfCountries) %>%
   filter(lifeExp < benchmark) %>%
-  summarise(n = n(), perCen = sum(shareOfThisCountry))
+  summarise(n = n(), ratio = sum(shareOfThisCountry)) %>%
+  mutate(`perCen%` = paste(round(ratio*100, 2), "%"))
 
-knitr::kable(head(tbl5))
+tbl5 %>%
+  head(15) %>%
+  knitr::kable(digits = 2, align = "r", padding = 10)
 ```
 
-| continent |  year|    n|     perCen|
-|:----------|-----:|----:|----------:|
-| Africa    |  1952|   52|  1.0000000|
-| Africa    |  1957|   52|  1.0000000|
-| Africa    |  1962|   51|  0.9807692|
-| Africa    |  1967|   50|  0.9615385|
-| Africa    |  1972|   50|  0.9615385|
-| Africa    |  1977|   50|  0.9615385|
+|  continent|  year|    n|  ratio|  perCen%|
+|----------:|-----:|----:|------:|--------:|
+|     Africa|  1952|   52|   1.00|    100 %|
+|     Africa|  1957|   52|   1.00|    100 %|
+|     Africa|  1962|   51|   0.98|  98.08 %|
+|     Africa|  1967|   50|   0.96|  96.15 %|
+|     Africa|  1972|   50|   0.96|  96.15 %|
+|     Africa|  1977|   50|   0.96|  96.15 %|
+|     Africa|  1982|   44|   0.85|  84.62 %|
+|     Africa|  1987|   40|   0.77|  76.92 %|
+|     Africa|  1992|   39|   0.75|     75 %|
+|     Africa|  1997|   39|   0.75|     75 %|
+|     Africa|  2002|   41|   0.79|  78.85 %|
+|     Africa|  2007|   40|   0.77|  76.92 %|
+|   Americas|  1952|   19|   0.76|     76 %|
+|   Americas|  1957|   15|   0.60|     60 %|
+|   Americas|  1962|   13|   0.52|     52 %|
 
 ``` r
-# Due to the table is super long, we just display the head of the table
+# Due to the table is super long, we just display the head 15 rows of the table
 ```
 
 ``` r
 tbl5 %>%
-  ggplot(aes(x= year, y = perCen, group= continent, color= continent)) +
+  ggplot(aes(x= year, y = ratio, group= continent, color= continent)) +
   geom_line() +
   xlab("Year") +
-  ylab("Percentage of countries whose life expectancy below benchmark(60)") +
+  ylab("Ratio of countries whose lifeExp is below benchmark (60)") +
   ggtitle("Each continent's below-benchmark country percentage over time")
 ```
 
-![](HW3_Gapminder_dplyr_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-12-1.png)
+![](HW3_Gapminder_dplyr_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-13-1.png)
 
 6.Make up your own: The absolute increase population
 ----------------------------------------------------
@@ -239,20 +278,31 @@ tbl6 <-
   summarise(totPop = sum(as.numeric(pop))) %>%
   mutate(delta = delta(totPop)) %>%
   na.omit()
-knitr::kable(head(tbl6))
+tbl6 %>%
+  head(15) %>%
+  knitr::kable(digits = 2, align = "r", padding = 10)
 ```
 
-| continent |  year|     totPop|     delta|
-|:----------|-----:|----------:|---------:|
-| Africa    |  1957|  264837738|  27197237|
-| Africa    |  1962|  296516865|  31679127|
-| Africa    |  1967|  335289489|  38772624|
-| Africa    |  1972|  379879541|  44590052|
-| Africa    |  1977|  433061021|  53181480|
-| Africa    |  1982|  499348587|  66287566|
+|  continent|  year|     totPop|     delta|
+|----------:|-----:|----------:|---------:|
+|     Africa|  1957|  264837738|  27197237|
+|     Africa|  1962|  296516865|  31679127|
+|     Africa|  1967|  335289489|  38772624|
+|     Africa|  1972|  379879541|  44590052|
+|     Africa|  1977|  433061021|  53181480|
+|     Africa|  1982|  499348587|  66287566|
+|     Africa|  1987|  574834110|  75485523|
+|     Africa|  1992|  659081517|  84247407|
+|     Africa|  1997|  743832984|  84751467|
+|     Africa|  2002|  833723916|  89890932|
+|     Africa|  2007|  929539692|  95815776|
+|   Americas|  1957|  386953916|  41801470|
+|   Americas|  1962|  433270254|  46316338|
+|   Americas|  1967|  480746623|  47476369|
+|   Americas|  1972|  529384210|  48637587|
 
 ``` r
-# Due to the table is super long, we just display the head of the table
+# Due to the table is super long, we just display the head 15 rows of the table
 ```
 
 ``` r
@@ -265,7 +315,7 @@ tbl6 %>%
   ggtitle("The increase in population over time separated by continent")
 ```
 
-![](HW3_Gapminder_dplyr_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-14-1.png)
+![](HW3_Gapminder_dplyr_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-15-1.png)
 
 7.Find countries with interesting stories.
 ------------------------------------------
@@ -285,33 +335,33 @@ tbl7 <-
   group_by(country) %>%
   mutate(gdpIncPC = deltaPC(gdpPercap)) %>%
   na.omit()
-knitr::kable(tbl7)
+knitr::kable(tbl7, digits = 2, align = "r", padding = 10)
 ```
 
-| country | continent |  year|   lifeExp|         pop|   gdpPercap|    gdpIncPC|
-|:--------|:----------|-----:|---------:|-----------:|-----------:|-----------:|
-| China   | Asia      |  1957|  50.54896|   637408000|    575.9870|   0.4383543|
-| China   | Asia      |  1962|  44.50136|   665770000|    487.6740|  -0.1533246|
-| China   | Asia      |  1967|  58.38112|   754550000|    612.7057|   0.2563837|
-| China   | Asia      |  1972|  63.11888|   862030000|    676.9001|   0.1047720|
-| China   | Asia      |  1977|  63.96736|   943455000|    741.2375|   0.0950471|
-| China   | Asia      |  1982|  65.52500|  1000281000|    962.4214|   0.2983982|
-| China   | Asia      |  1987|  67.27400|  1084035000|   1378.9040|   0.4327446|
-| China   | Asia      |  1992|  68.69000|  1164970000|   1655.7842|   0.2007973|
-| China   | Asia      |  1997|  70.42600|  1230075000|   2289.2341|   0.3825680|
-| China   | Asia      |  2002|  72.02800|  1280400000|   3119.2809|   0.3625871|
-| China   | Asia      |  2007|  72.96100|  1318683096|   4959.1149|   0.5898263|
-| Japan   | Asia      |  1957|  65.50000|    91563009|   4317.6944|   0.3421675|
-| Japan   | Asia      |  1962|  68.73000|    95831757|   6576.6495|   0.5231855|
-| Japan   | Asia      |  1967|  71.43000|   100825279|   9847.7886|   0.4973869|
-| Japan   | Asia      |  1972|  73.42000|   107188273|  14778.7864|   0.5007213|
-| Japan   | Asia      |  1977|  75.38000|   113872473|  16610.3770|   0.1239338|
-| Japan   | Asia      |  1982|  77.11000|   118454974|  19384.1057|   0.1669877|
-| Japan   | Asia      |  1987|  78.67000|   122091325|  22375.9419|   0.1543448|
-| Japan   | Asia      |  1992|  79.36000|   124329269|  26824.8951|   0.1988275|
-| Japan   | Asia      |  1997|  80.69000|   125956499|  28816.5850|   0.0742478|
-| Japan   | Asia      |  2002|  82.00000|   127065841|  28604.5919|  -0.0073566|
-| Japan   | Asia      |  2007|  82.60300|   127467972|  31656.0681|   0.1066778|
+|  country|  continent|  year|  lifeExp|         pop|  gdpPercap|  gdpIncPC|
+|--------:|----------:|-----:|--------:|-----------:|----------:|---------:|
+|    China|       Asia|  1957|    50.55|   637408000|     575.99|      0.44|
+|    China|       Asia|  1962|    44.50|   665770000|     487.67|     -0.15|
+|    China|       Asia|  1967|    58.38|   754550000|     612.71|      0.26|
+|    China|       Asia|  1972|    63.12|   862030000|     676.90|      0.10|
+|    China|       Asia|  1977|    63.97|   943455000|     741.24|      0.10|
+|    China|       Asia|  1982|    65.53|  1000281000|     962.42|      0.30|
+|    China|       Asia|  1987|    67.27|  1084035000|    1378.90|      0.43|
+|    China|       Asia|  1992|    68.69|  1164970000|    1655.78|      0.20|
+|    China|       Asia|  1997|    70.43|  1230075000|    2289.23|      0.38|
+|    China|       Asia|  2002|    72.03|  1280400000|    3119.28|      0.36|
+|    China|       Asia|  2007|    72.96|  1318683096|    4959.11|      0.59|
+|    Japan|       Asia|  1957|    65.50|    91563009|    4317.69|      0.34|
+|    Japan|       Asia|  1962|    68.73|    95831757|    6576.65|      0.52|
+|    Japan|       Asia|  1967|    71.43|   100825279|    9847.79|      0.50|
+|    Japan|       Asia|  1972|    73.42|   107188273|   14778.79|      0.50|
+|    Japan|       Asia|  1977|    75.38|   113872473|   16610.38|      0.12|
+|    Japan|       Asia|  1982|    77.11|   118454974|   19384.11|      0.17|
+|    Japan|       Asia|  1987|    78.67|   122091325|   22375.94|      0.15|
+|    Japan|       Asia|  1992|    79.36|   124329269|   26824.90|      0.20|
+|    Japan|       Asia|  1997|    80.69|   125956499|   28816.58|      0.07|
+|    Japan|       Asia|  2002|    82.00|   127065841|   28604.59|     -0.01|
+|    Japan|       Asia|  2007|    82.60|   127467972|   31656.07|      0.11|
 
 ``` r
 tbl7 %>%
@@ -323,14 +373,14 @@ tbl7 %>%
   ggtitle("Increase in the GDP per capita over time for country China and Japan")
 ```
 
-![](HW3_Gapminder_dplyr_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-16-1.png)
+![](HW3_Gapminder_dplyr_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-17-1.png)
 
 Report your process
 -------------------
 
 -   #### Reflect on what was hard/easy:
 
-    I think this assignment is not too hard in general. I am familiar with the functions in dplyr, just need some practice with summarise() function, and need to check with the use of cumsum() function. The part that consumes me some time is to reformat.
+    I think this assignment is not too hard in general. I am familiar with the functions in dplyr, just need some practice with summarise() function, and need to check with the use of cumsum() function. The part that consumes me some time is to reformat. Additionally, I really invested quite a lot time making the table and figures side-by-side, and still could not make it. I followed Jenny's instructions step by step, but still achieve nothing. I hope to find a solution!
 
 -   #### Problems you solved, helpful tutorials you read, etc.
 

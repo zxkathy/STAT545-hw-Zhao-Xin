@@ -22,7 +22,7 @@ tbl1 <-
   gapminder %>% 
   group_by(continent) %>% 
   summarise(minGDP = min(gdpPercap), medianGDP = median(gdpPercap), maxGDP = max(gdpPercap))
-knitr::kable(tbl1)
+knitr::kable(tbl1, digits = 2, align = "r", padding = 10)
 ```
 
 ```{r}
@@ -34,6 +34,8 @@ tbl1 %>%
   ggtitle("Range of GDP per capita separated by continent")
 ```
 
+Note: The graph displaying max and min is not boxplot!
+
 ## 2.Look at the spread of GDP per capita within the continents.
 
 Look at the IQR
@@ -44,7 +46,7 @@ tbl2 <-
   summarise(`25%Q`=quantile(gdpPercap, probs=0.25),
             `50%Q`=quantile(gdpPercap, probs=0.5),
             `75%Q`=quantile(gdpPercap, probs=0.75))
-knitr::kable(tbl2)
+knitr::kable(tbl2, digits = 2, align = "r", padding = 10)
 ```
 
 ```{r}
@@ -53,6 +55,18 @@ gapminder %>%
   geom_boxplot() +
   xlab("Continent") +
   ylab("GDP per capita") +
+  ggtitle("Boxplot of GDP per capita separated by continent")
+```
+
+Since it is not quite clearly displayed with current settings of y-labs, I changed the y-labs to the log10 scale, and check it out!
+
+```{r}
+gapminder %>%
+  ggplot(aes(x= continent, y = gdpPercap, color=continent)) + 
+  geom_boxplot() +
+  xlab("Continent") +
+  ylab("GDP per capita") + 
+  scale_y_log10() +
   ggtitle("Boxplot of GDP per capita separated by continent")
 ```
 
@@ -65,7 +79,7 @@ gapminder %>%
   mutate(weighted_lifeE = weighted.mean(lifeExp, pop)) %>%
   select(year, weighted_lifeE) %>%
   distinct(year, weighted_lifeE) %>%
-  knitr::kable()
+  knitr::kable(digits = 2, align = "r", padding = 10)
 ```
 ```{r}
 gapminder %>%
@@ -85,7 +99,7 @@ gapminder %>%
   group_by(year) %>%
   mutate(trimed_mean = mean(lifeExp, trim = .1)) %>%
   distinct(year, trimed_mean) %>%
-  knitr::kable()
+  knitr::kable(digits = 2, align = "r", padding = 10)
 ```
 
 
@@ -94,8 +108,10 @@ gapminder %>%
 tbl4 <- 
   gapminder %>%
   select(continent, year, lifeExp)
-knitr::kable(head(tbl4))
-# Due to the table is super long, we just display the head of the table
+tbl4 %>%
+  head(15) %>%
+  knitr::kable(digits = 2, align = "r", padding = 10)
+# Due to the table is super long, we just display the head 15 rows of the table
 ```
 ```{r}
 tbl4 %>%
@@ -118,17 +134,21 @@ tbl5 <-
   group_by(continent, year) %>% 
   mutate(NumOfCountries = n(), shareOfThisCountry = 1/NumOfCountries) %>%
   filter(lifeExp < benchmark) %>%
-  summarise(n = n(), perCen = sum(shareOfThisCountry))
+  summarise(n = n(), ratio = sum(shareOfThisCountry)) %>%
+  mutate(`perCen%` = paste(round(ratio*100, 2), "%"))
 
-knitr::kable(head(tbl5))
-# Due to the table is super long, we just display the head of the table
+tbl5 %>%
+  head(15) %>%
+  knitr::kable(digits = 2, align = "r", padding = 10)
+# Due to the table is super long, we just display the head 15 rows of the table
 ```
+
 ```{r}
 tbl5 %>%
-  ggplot(aes(x= year, y = perCen, group= continent, color= continent)) +
+  ggplot(aes(x= year, y = ratio, group= continent, color= continent)) +
   geom_line() +
   xlab("Year") +
-  ylab("Percentage of countries whose life expectancy below benchmark(60)") +
+  ylab("Ratio of countries whose lifeExp is below benchmark (60)") +
   ggtitle("Each continent's below-benchmark country percentage over time")
 ```
 
@@ -147,8 +167,10 @@ tbl6 <-
   summarise(totPop = sum(as.numeric(pop))) %>%
   mutate(delta = delta(totPop)) %>%
   na.omit()
-knitr::kable(head(tbl6))
-# Due to the table is super long, we just display the head of the table
+tbl6 %>%
+  head(15) %>%
+  knitr::kable(digits = 2, align = "r", padding = 10)
+# Due to the table is super long, we just display the head 15 rows of the table
 ```
 
 
@@ -161,8 +183,6 @@ tbl6 %>%
   ylab("Increase in the population") +
   ggtitle("The increase in population over time separated by continent")
 ```
-
-
 
 ## 7.Find countries with interesting stories. 
 I compare the GDP increase percentage between two countries. It can be seen China has an increasing GDP increase per capita, and Japan has a decreasing increase per capita. 
@@ -179,7 +199,7 @@ tbl7 <-
   group_by(country) %>%
   mutate(gdpIncPC = deltaPC(gdpPercap)) %>%
   na.omit()
-knitr::kable(tbl7)
+knitr::kable(tbl7, digits = 2, align = "r", padding = 10)
 ```
 
 ```{r}
@@ -195,7 +215,8 @@ tbl7 %>%
 ## Report your process
 
 - #### Reflect on what was hard/easy:
-I think this assignment is not too hard in general. I am familiar with the functions in dplyr, just need some practice with summarise() function, and need to check with the use of cumsum() function. The part that consumes me some time is to reformat.  
+I think this assignment is not too hard in general. I am familiar with the functions in dplyr, just need some practice with summarise() function, and need to check with the use of cumsum() function. The part that consumes me some time is to reformat. Additionally, I really invested quite a lot time making the table and figures side-by-side, and still could not make it. I followed Jenny's instructions step by step, but still achieve nothing. I hope to find a solution!
+
 
 - #### Problems you solved, helpful tutorials you read, etc. 
   + When I was doing the weighted mean of lifeExp weighted by the population, I firstly wanted to add a column of the population weights, and manually calculated the weighted mean. After I did that, when I double checked my code, I was chanlleging myself: whether there is simpler way to do that? So I googled, and found yes! A really simple function: [weighted.mean()](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/weighted.mean.html). Samed as trimmed mean. 
