@@ -14,11 +14,10 @@ library(gapminder)
 library(ggplot2)
 library(tidyr)
 library(countrycode)
-library(geonames)
 ```
 
 
-## Problem 1: You have data in one “shape” but you wish it were in another.
+## Problem 1: General data reshaping and relationship to aggregation.
 
 #### - Activity #2
 
@@ -28,7 +27,11 @@ tbl1.2 <-
   gapminder %>%
   filter(country %in% c("United States", "China", "Canada")) %>%
   select(country, year, lifeExp)
-knitr::kable(tbl1.2)
+
+tbl1.2 %>%
+  head(15) %>%
+  knitr::kable(digits = 2, align ="r", padding = 10)
+#Due to the long table, we only display head 15 rows. 
 
 tbl1.2 %>%
   ggplot(aes(x = year, y = lifeExp, color = country)) +
@@ -36,14 +39,17 @@ tbl1.2 %>%
   ggtitle("Scatterplot of lifeExp vs year for country Canada, China, and United States")
 ```
 
-#### -Activity #3 Compute median of life expectancy for all possible combinations of continent and year. 
+#### - Activity #3 Compute median of life expectancy for all possible combinations of continent and year. 
 
 ```{r  results='asis'}
 tbl1.3 <- 
   gapminder %>%
   group_by(continent, year) %>%
   summarise(median = median(lifeExp))
-knitr::kable(tbl1.3)
+
+tbl1.3 %>%
+  head(15) %>%
+  knitr::kable(digits = 2, align ="r", padding = 10)
 
 tbl1.3 %>%
   ggplot(aes(x = year, y = median, group = continent, color = continent)) +
@@ -53,69 +59,151 @@ tbl1.3 %>%
 
 ## Problem 2: Join, merge, look up
 
-#### - Activity #1
+#### - Activity #1 Create a second data frame, complementary to Gapminder. Join this with (part of) Gapminder using a dplyr join function and make some observations about the process and result. Explore the different types of joins.
+
+We generated another dataframe containing all non-Asian countries with country code and country name in French, and deleting the rows that contains NA (i.e. the countries whose values were not matched unambiguously, and where the warning comes from), and eventually, we have a 107 rows * 4 columns dataframe.    
+#### Create a new dataset
 
 ```{r}
+ctryDat <- 
+  gapminder %>%
+  filter(continent != "Asia") %>%
+  distinct(country) %>%
+  select(country = `country`) %>%
+  mutate(ctryCode = countrycode(country, 'country.name', 'iso3c'), 
+         ctryCodeNum = countrycode(country, 'country.name', 'iso3n'),
+         ctryFR = countrycode(country, 'country.name', 'country.name.fr')) %>%
+  na.omit()
+dim(ctryDat)
 
-  knitr::kable()
+ctryDat %>%
+  head(15) %>%
+  knitr::kable(digits = 2, align ="r", padding = 10)
+```
+
+#### Explore left_join
+
+```{r}
+tbl2.1 <- 
+  left_join(ctryDat, gapminder, by = "country")
+dim(tbl2.1) 
+```
+
+Even though my first thought would be the left join, and we only want 107 rows (as the ctryDat), the left_join still gives me 1284 rows, which is 12 times of the # of rows than I expected. The reason is that because gapminder has 12 different years for the same country, so, if we don't specify the year, it would join all the years of country. Let's try anohter example. 
+
+```{r}
+ctryDat2<- 
+  ctryDat %>%
+  mutate(year = 2007)
+tbl2.2 <- 
+  left_join(ctryDat2, gapminder, by = c("country", "year"))
+dim(tbl2.2) 
+
+tbl2.2 %>%
+  head(15) %>%
+  knitr::kable(digits = 2, align ="r", padding = 10)
+```
+
+It can be seen that now the joining works fine as we expected. 
+
+```{r}
+tbl2.3 <- 
+  left_join(gapminder, ctryDat2, by = c("country", "year"))
+dim(tbl2.3) 
+
+tbl2.3 %>%
+  tail(15) %>%
+  knitr::kable(digits = 2, align ="r", padding = 10)
+```
+
+When doing the left join above, the dataframe of gapminder will be kept, and adding the additional columns according to the joining conditions.
+
+
+#### Explore inner_join()
+
+```{r}
+tbl2.4 <- 
+  inner_join(ctryDat2, gapminder, by = c("country", "year"))
+
+which((
+  inner_join(ctryDat2, gapminder, by = c("country", "year")) %>%
+    select(country, continent, year, lifeExp, pop, gdpPercap, ctryCode,
+           ctryCodeNum, ctryFR) ==
+  inner_join(gapminder, ctryDat2, by = c("country", "year")) %>%
+    select(country, continent, year, lifeExp, pop, gdpPercap, ctryCode,
+           ctryCodeNum, ctryFR)) != 
+    TRUE)
+
+tbl2.4 %>%
+  head(15) %>%
+  knitr::kable(digits = 2, align ="r", padding = 10)
+```
+
+From above, we can see that the order of the two dataset in inner join does not affect the joining effects, just rearrange the order of variables, but not affect the values within each variable, and does not affect the number of rows in the result. 
+
+#### Explore full_join
+```{r}
+tbl2.5 <- 
+  full_join(ctryDat2, gapminder, by = c("country", "year"))
+
+dim(tbl2.5)
+
+tbl2.5 %>%
+  head(15) %>%
+  knitr::kable(digits = 2, align ="r", padding = 10)
+```
+
+Full join will join the two dataframe all together, without throwing away any mismatching rows. And no matter which data frame you put in first, the results in terms of the content are the same. 
+
+#### Explore semi_join()
+```{r}
+tbl2.6 <- 
+  semi_join(gapminder, ctryDat2, by = c("country", "year"))
+
+tbl2.6 %>%
+  head(15) %>%
+  knitr::kable(digits = 2, align ="r", padding = 10)
+```
+
+```{r}
+tbl2.7 <- 
+  semi_join(ctryDat2, gapminder, by = c("country", "year"))
+dim(tbl2.7)
+tbl2.7 %>%
+  head(15) %>%
+  knitr::kable(digits = 2, align ="r", padding = 10)
+```
+semi_join() returned to a subset of the dataframe positioned first, also deleting the rows do not match values. 
+
+#### Explore anti_join()
+```{r}
+tbl2.8 <- 
+  anti_join(ctryDat2, gapminder, by = c("country", "year"))
+dim(tbl2.8)
 ```
 
 
 ```{r}
-countryT <- read.table("https://raw.githubusercontent.com/vincentarelbundock/Rdatasets/master/csv/Ecdat/incidents.byCountryYr.csv", sep = ",", header =T)
-head(countryT)
+tbl2.9 <- 
+  anti_join(gapminder, ctryDat2, by = c("country", "year"))
+dim(tbl2.9)
+tbl2.9 %>%
+  head(15) %>%
+  knitr::kable(digits = 2, align ="r", padding = 10)
 ```
 
-## 1.Get the maximum and minimum of GDP per capita for all continents.
+I found that anti_join() and semi_join() can be complement to each other. The result of `tbl2.7` and `tbl2.9` consists the whole gapminder dataframe; Similarly, the result of `tbl2.6` and `tbl2.8` consists the whole ctryDat2 dataframe. 
 
-#### Create a second data frame, complementary to Gapminder
-
-```{r results='asis'}
-tbl1 <- 
-  gapminder %>% 
-  group_by(continent) %>% 
-  summarise(minGDP = min(gdpPercap), medianGDP = median(gdpPercap), maxGDP = max(gdpPercap))
-knitr::kable(tbl1)
-```
-
-
----
-title: "HW4"
-output: html_document
----
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
-```
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
-
+## Report your process
 
 As I have some experience with ggplot and dplyr. So I firstly tried to tackle the problems without reviewing any materials. However, when I tried the following code, I got an error. The error stucks me a few minutes, so I went back to the course materials, and found out I misplaced `filter` and `select`. I did not pay much attention to the difference before, but now I have clearer idea and won't make the same mistakes next time.  
 
-```{r}
+```{r  eval=FALSE}
 gapminder %>%
   select(country %in% c("United States", "China", "Canada")) %>%
   itler(country, year, lifeExp)
 ```
 
-Error in country %in% c("United States", "China", "Canada") : 
-  object 'country' not found
+Error in country %in% c("United States", "China", "Canada"): object 'country' not found
+
+In addition, I found it is not easy to construct an appropriate dataframe. My `ctryDat2` is not a perfect one in demonstrating the _join() types, because it does not have the country beyound the range of `gapminder` dataset. Also, gapminder is a very large dataset, so the _join() results may be not so straightforward to check. 
