@@ -13,6 +13,7 @@ library(dplyr)
 library(gapminder)
 library(ggplot2)
 library(tidyr)
+library(lattice)
 library(countrycode)
 ```
 
@@ -32,30 +33,75 @@ tbl1.2 %>%
   head(15) %>%
   knitr::kable(digits = 2, align ="r", padding = 10)
 #Due to the long table, we only display head 15 rows. 
+```
 
+We can easily make ggplot using the above table format, but that is not what the question is asking.
+```{r}
 tbl1.2 %>%
   ggplot(aes(x = year, y = lifeExp, color = country)) +
   geom_point() +
   ggtitle("Scatterplot of lifeExp vs year for country Canada, China, and United States")
 ```
 
+The above table is a little bit hard to see, to let's spread it. 
+
+```{r results='asis'}
+tbl1.3 <- 
+  tbl1.2 %>%
+  spread(key = country, value = lifeExp)
+tbl1.3 %>%
+  knitr::kable(digits = 2, align ="r", padding = 10 )
+```
+
+Take advantage of this new data shape to scatterplot life expectancy for one country against that of another
+```{r, fig.width=5.5, fig.height=5.5}
+tbl1.3 %>%
+  select(-year) %>%
+  splom()
+```
+
+
 #### - Activity #3 Compute median of life expectancy for all possible combinations of continent and year. 
 
 ```{r  results='asis'}
-tbl1.3 <- 
+tbl1.4 <- 
   gapminder %>%
   group_by(continent, year) %>%
   summarise(median = median(lifeExp))
 
-tbl1.3 %>%
+tbl1.4 %>%
   head(15) %>%
   knitr::kable(digits = 2, align ="r", padding = 10)
+```
 
-tbl1.3 %>%
+We can easily make ggplot using the above table format, but I guess that is not what the question is asking.
+```{r}
+tbl1.4 %>%
   ggplot(aes(x = year, y = median, group = continent, color = continent)) +
   geom_line() + geom_point() + 
   ggtitle("The median of lifeExp trend for five continents")
 ```
+
+The above table is a little bit hard to see, to let's spread it. 
+
+```{r results='asis'}
+tbl1.5 <- 
+  tbl1.4 %>%
+  spread(key = continent, value = median)
+tbl1.5 %>%
+  knitr::kable(digits = 2, align ="r", padding = 10)
+```
+
+#### Is there a plot that is easier to make with the data in this shape versis the usual form? Try it!
+
+Pairwise scatterplot is easier to do using this format of data form. 
+
+```{r, fig.width=9, fig.height=8}
+tbl1.5 %>%
+  select(-year) %>%
+  splom()
+```
+
 
 ## Problem 2: Join, merge, look up
 

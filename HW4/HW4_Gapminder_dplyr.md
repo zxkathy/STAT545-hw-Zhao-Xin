@@ -13,6 +13,7 @@ library(dplyr)
 library(gapminder)
 library(ggplot2)
 library(tidyr)
+library(lattice)
 library(countrycode)
 ```
 
@@ -54,24 +55,63 @@ tbl1.2 %>%
 
 ``` r
 #Due to the long table, we only display head 15 rows. 
+```
 
+We can easily make ggplot using the above table format, but that is not what the question is asking.
+
+``` r
 tbl1.2 %>%
   ggplot(aes(x = year, y = lifeExp, color = country)) +
   geom_point() +
   ggtitle("Scatterplot of lifeExp vs year for country Canada, China, and United States")
 ```
 
-![](HW4_Gapminder_dplyr_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-2-1.png)
+![](HW4_Gapminder_dplyr_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-3-1.png)
+
+The above table is a little bit hard to see, to let's spread it.
+
+``` r
+tbl1.3 <- 
+  tbl1.2 %>%
+  spread(key = country, value = lifeExp)
+tbl1.3 %>%
+  knitr::kable(digits = 2, align ="r", padding = 10 )
+```
+
+|  year|  Canada|  China|  United States|
+|-----:|-------:|------:|--------------:|
+|  1952|   68.75|  44.00|          68.44|
+|  1957|   69.96|  50.55|          69.49|
+|  1962|   71.30|  44.50|          70.21|
+|  1967|   72.13|  58.38|          70.76|
+|  1972|   72.88|  63.12|          71.34|
+|  1977|   74.21|  63.97|          73.38|
+|  1982|   75.76|  65.53|          74.65|
+|  1987|   76.86|  67.27|          75.02|
+|  1992|   77.95|  68.69|          76.09|
+|  1997|   78.61|  70.43|          76.81|
+|  2002|   79.77|  72.03|          77.31|
+|  2007|   80.65|  72.96|          78.24|
+
+Take advantage of this new data shape to scatterplot life expectancy for one country against that of another
+
+``` r
+tbl1.3 %>%
+  select(-year) %>%
+  splom()
+```
+
+![](HW4_Gapminder_dplyr_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-5-1.png)
 
 #### - Activity \#3 Compute median of life expectancy for all possible combinations of continent and year.
 
 ``` r
-tbl1.3 <- 
+tbl1.4 <- 
   gapminder %>%
   group_by(continent, year) %>%
   summarise(median = median(lifeExp))
 
-tbl1.3 %>%
+tbl1.4 %>%
   head(15) %>%
   knitr::kable(digits = 2, align ="r", padding = 10)
 ```
@@ -94,14 +134,53 @@ tbl1.3 %>%
 |   Americas|  1957|   56.07|
 |   Americas|  1962|   58.30|
 
+We can easily make ggplot using the above table format, but I guess that is not what the question is asking.
+
 ``` r
-tbl1.3 %>%
+tbl1.4 %>%
   ggplot(aes(x = year, y = median, group = continent, color = continent)) +
   geom_line() + geom_point() + 
   ggtitle("The median of lifeExp trend for five continents")
 ```
 
-![](HW4_Gapminder_dplyr_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-3-1.png)
+![](HW4_Gapminder_dplyr_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-7-1.png)
+
+The above table is a little bit hard to see, to let's spread it.
+
+``` r
+tbl1.5 <- 
+  tbl1.4 %>%
+  spread(key = continent, value = median)
+tbl1.5 %>%
+  knitr::kable(digits = 2, align ="r", padding = 10)
+```
+
+|  year|  Africa|  Americas|   Asia|  Europe|  Oceania|
+|-----:|-------:|---------:|------:|-------:|--------:|
+|  1952|   38.83|     54.74|  44.87|   65.90|    69.25|
+|  1957|   40.59|     56.07|  48.28|   67.65|    70.30|
+|  1962|   42.63|     58.30|  49.33|   69.53|    71.09|
+|  1967|   44.70|     60.52|  53.66|   70.61|    71.31|
+|  1972|   47.03|     63.44|  56.95|   70.89|    71.91|
+|  1977|   49.27|     66.35|  60.77|   72.34|    72.85|
+|  1982|   50.76|     67.41|  63.74|   73.49|    74.29|
+|  1987|   51.64|     69.50|  66.30|   74.81|    75.32|
+|  1992|   52.43|     69.86|  68.69|   75.45|    76.94|
+|  1997|   52.76|     72.15|  70.27|   76.12|    78.19|
+|  2002|   51.24|     72.05|  71.03|   77.54|    79.74|
+|  2007|   52.93|     72.90|  72.40|   78.61|    80.72|
+
+#### Is there a plot that is easier to make with the data in this shape versis the usual form? Try it!
+
+Pairwise scatterplot is easier to do using this format of data form.
+
+``` r
+tbl1.5 %>%
+  select(-year) %>%
+  splom()
+```
+
+![](HW4_Gapminder_dplyr_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-9-1.png)
 
 Problem 2: Join, merge, look up
 -------------------------------
