@@ -578,10 +578,10 @@ Problem 5: Writing figures to file
 ----------------------------------
 
 ``` r
-ggsave("ggSave.png", width = 12, height = 8, plot = forGGSave)
+ggsave(paste(getwd(), "/HW5_files/", "ggSave.png", sep = ""), width = 12, height = 8, plot = forGGSave)
 ```
 
-Below figure is retrieved from the code `![plot](ggSave.png)`. ![plot](ggSave.png)
+Below figure is retrieved from the code `![plot](ggSave.png)`. \[plot\](paste(getwd(), "/HW5\_files/", "ggSave.png", sep = "")
 
 Problem 6: But I want to do more
 --------------------------------
@@ -595,11 +595,13 @@ favFood <- data.frame(
   stringsAsFactors=TRUE)
 
 slope_small <-
-  gpmdr_slope %>%
+  gapminder %>%
   filter(country %in% c("Germany", "Japan", "Korea, Rep.", 
-                        "China", "United States", "France")) %>%
+                        "China", "United States", "France"), 
+         year %in% c(2002,2007)) %>%
   droplevels()%>%
-  left_join(., favFood, by = "country") 
+  left_join(., favFood, by = "country") %>%
+  arrange(lifeExp)
 
 levels(slope_small$country)
 ```
@@ -613,37 +615,34 @@ levels(slope_small$food)
 
     ## [1] "BBQ"    "Beer"   "Burger" "Hotpot" "Steak"  "Sushi"
 
-It can been seen that both factor `country` and `food` are arranged alphabetically, and not matching each other. Let's reorder them and let them match with each order.
+It can been seen that both factor `country` and `food` are arranged alphabetically, and not matching each other. Let's firstly extract the unique matching and then reorder them and let them match with each order.
 
 ``` r
-fct_relevel(slope_small$food, as.character(slope_small$food))
+uniq_ss <- slope_small %>%
+  dplyr::select(country, food) %>%
+  unique()
+
+slope_small$food <- 
+  slope_small$food %>% fct_relevel(as.character(uniq_ss$food))
+
+slope_small$country <- 
+  slope_small$country %>% fct_relevel(as.character(uniq_ss$country)) 
 ```
-
-    ## [1] Hotpot Steak  Beer   Sushi  BBQ    Burger
-    ## Levels: Hotpot Steak Beer Sushi BBQ Burger
-
-``` r
-fct_relevel(slope_small$country, as.character(slope_small$country))
-```
-
-    ## [1] China         France        Germany       Japan         Korea, Rep.  
-    ## [6] United States
-    ## Levels: China France Germany Japan Korea, Rep. United States
 
 Now they are mapping to each other.
 
 ``` r
-levels(slope_small$country) 
+str(slope_small)
 ```
 
-    ## [1] "China"         "France"        "Germany"       "Japan"        
-    ## [5] "Korea, Rep."   "United States"
-
-``` r
-levels(slope_small$food)
-```
-
-    ## [1] "BBQ"    "Beer"   "Burger" "Hotpot" "Steak"  "Sushi"
+    ## Classes 'tbl_df', 'tbl' and 'data.frame':    12 obs. of  7 variables:
+    ##  $ country  : Factor w/ 6 levels "China","Korea, Rep.",..: 1 1 2 3 3 2 4 4 5 5 ...
+    ##  $ continent: Factor w/ 3 levels "Americas","Asia",..: 2 2 2 1 1 2 3 3 3 3 ...
+    ##  $ year     : int  2002 2007 2002 2002 2007 2007 2002 2007 2002 2007 ...
+    ##  $ lifeExp  : num  72 73 77 77.3 78.2 ...
+    ##  $ pop      : int  1280400000 1318683096 47969150 287675526 301139947 49044790 82350671 82400996 59925035 61083916 ...
+    ##  $ gdpPercap: num  3119 4959 19234 39097 42952 ...
+    ##  $ food     : Factor w/ 6 levels "Hotpot","BBQ",..: 1 1 2 3 3 2 4 4 5 5 ...
 
 Report your process
 -------------------

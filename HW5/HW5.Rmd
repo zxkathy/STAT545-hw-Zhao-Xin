@@ -281,11 +281,11 @@ forGGSave
 ## Problem 5: Writing figures to file
 
 ```{r}
-ggsave("ggSave.png", width = 12, height = 8, plot = forGGSave)
+ggsave(paste(getwd(), "/HW5_files/", "ggSave.png", sep = ""), width = 12, height = 8, plot = forGGSave)
 ```
 
 Below figure is retrieved from the code `![plot](ggSave.png)`. 
-![plot](ggSave.png)
+![plot](paste(getwd(), "/HW5_files/", "ggSave.png", sep = "")
 
 ## Problem 6: But I want to do more
 ```{r}
@@ -311,12 +311,10 @@ levels(slope_small$food)
 
 It can been seen that both factor `country` and `food` are arranged alphabetically, and not matching each other. Let's firstly extract the unique matching and then reorder them and let them match with each order. 
 
-```{r results='asis'}
+```{r  results = 'asis'}
 uniq_ss <- slope_small %>%
   dplyr::select(country, food) %>%
   unique()
-unique %>% 
-    knitr::kable(digits = 2, align ="r", padding = 10 )
 
 slope_small$food <- 
   slope_small$food %>% fct_relevel(as.character(uniq_ss$food))
