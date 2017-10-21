@@ -516,7 +516,7 @@ Before
 
 ``` r
 ggplot(gapminder, aes(x= year, y = gdpPercap, group= country)) + 
-  geom_line(alpha = 0.4, aes(color = year)) +
+  geom_line(alpha = 0.4) +
   ggtitle("GDP Per Capita trend as year increases")
 ```
 
@@ -527,7 +527,7 @@ After
 ``` r
 color_layer <- scale_color_manual("", #title of the legend
                                   labels = c("Other Counbtries", "Kuwait"), 
-                                  values = c("black", "red"))
+                                  values = c(brewer.pal(n=2, "Dark2")))
 
 ggplot(gapminder, aes(x= year, y = gdpPercap, group = country)) + 
   geom_line(aes(group = country, 
@@ -538,6 +538,8 @@ ggplot(gapminder, aes(x= year, y = gdpPercap, group = country)) +
                        guide = FALSE) +
   ggtitle("GDP Per Capita trend as year increases")
 ```
+
+    ## Warning in brewer.pal(n = 2, "Dark2"): minimal value for n is 3, returning requested palette with 3 different levels
 
 ![](HW5_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-17-1.png)
 

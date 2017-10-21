@@ -216,7 +216,7 @@ It shows that saving using dput does preserve the factor levels.
 Before
 ```{r}
 ggplot(gapminder, aes(x= year, y = gdpPercap, group= country)) + 
-  geom_line(alpha = 0.4, aes(color = year)) +
+  geom_line(alpha = 0.4) +
   ggtitle("GDP Per Capita trend as year increases")
 ```
 
@@ -224,7 +224,7 @@ After
 ```{r}
 color_layer <- scale_color_manual("", #title of the legend
                                   labels = c("Other Counbtries", "Kuwait"), 
-                                  values = c("black", "red"))
+                                  values = c(brewer.pal(n=2, "Dark2")))
 
 ggplot(gapminder, aes(x= year, y = gdpPercap, group = country)) + 
   geom_line(aes(group = country, 
