@@ -3,7 +3,7 @@
 
 ## What homework have I done? 
 | **Homework No.** |     **Description**    |
-|----------------|------------------------|----------------|
+|----------------|------------------------|
 | [HW 1]*(https://github.com/zxkathy/STAT545-hw01-Zhao-Xin/blob/master/README.md)       | Edit README.md and use R Markdown   |   
 | [HW 2](https://github.com/zxkathy/STAT545-hw-Zhao-Xin/blob/master/HW2/HW2_Gapminder_dplyr.md)       | Explore Gapminder and use dplyr | 
 | [HW 3](https://github.com/zxkathy/STAT545-hw-Zhao-Xin/blob/master/HW3/HW3_Gapminder_dplyr.md)       | Use dplyr to manipulate and explore data  | 
