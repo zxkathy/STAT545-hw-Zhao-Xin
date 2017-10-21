@@ -516,7 +516,7 @@ Before
 
 ``` r
 ggplot(gapminder, aes(x= year, y = gdpPercap, group= country)) + 
-  geom_line(alpha = 0.4) +
+  geom_line(alpha = 0.4, color = "blue") +
   ggtitle("GDP Per Capita trend as year increases")
 ```
 
@@ -573,13 +573,16 @@ forGGSave<-
   facet_wrap(~ continent, scales = "free") + 
   ggtitle("Scatterplot gdpPercap vs pop by each continent") +
   scale_colour_distiller(palette="Spectral")
+forGGSave
 ```
+
+![](HW5_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-19-1.png)
 
 Problem 5: Writing figures to file
 ----------------------------------
 
 ``` r
-ggsave("ggSave.png", width = 12, height = 7, plot = forGGSave)
+ggsave("ggSave.png", width = 12, height = 8, plot = forGGSave)
 ```
 
 Below figure is retrieved from the code `![plot](ggSave.png)`. ![plot](ggSave.png)
