@@ -21,7 +21,7 @@ library(gdata)
 Problem 1: Factor management
 ----------------------------
 
-#### Task 1.1: Drop `Oceania`
+#### Task 1.1 Drop `Oceania`
 
 Filter out the continent `Oceania` first in preparation for the following work.
 
@@ -63,7 +63,7 @@ levels(gapmdr_dropLvl$continent)
 
 Both functions `fct_drop()` and `droplevels()` can drop unused factor levels, but `fct_drop()` is used for a factor, but `droplevels()` can operate on either a factor or a data frame.
 
-#### Task 1.2: Recorder the levels of `continent`
+#### Task 1.2 Recorder the levels of `continent`
 
 ``` r
 gapmdr_dropLvl$continent%>%
@@ -98,12 +98,12 @@ grid.arrange(p1, p2, ncol=2)
 
 ![](HW5_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-6-1.png)
 
-Task 1.3 (Extra)
-----------------
+Task 1.3 Extra exploration
+--------------------------
 
 Instead of using the default median, I can explore some more, using gapminder data, not the one with dropped levels
 
-For example, reorder the `country` based on its average gdp increase rate across all years available.
+#### Reorder the `country` based on its average gdp increase rate across all years available. For simplicity, we only display head 20 of the data.
 
 ``` r
 gpmdr_slope<- 
@@ -111,25 +111,49 @@ gpmdr_slope<-
   group_by(country) %>% 
   do(fit = lm(gdpPercap ~ year, .)) %>% 
   summarise(country = country, intercept = coef(fit)[1],  slope= coef(fit)[2])
+gpmdr_slope %>%
+  head(20) %>%
+  knitr::kable(digits = 2, align ="r", padding = 10 )
+```
 
+|                 country|    intercept|   slope|
+|-----------------------:|------------:|-------:|
+|             Afghanistan|      1674.81|   -0.44|
+|                 Albania|   -104544.09|   54.46|
+|                 Algeria|   -122818.21|   64.28|
+|                  Angola|     49633.36|  -23.25|
+|               Argentina|   -162888.14|   86.81|
+|               Australia|   -824972.72|  426.85|
+|                 Austria|  -1037773.98|  534.57|
+|                 Bahrain|   -535201.31|  279.50|
+|              Bangladesh|    -19974.59|   10.50|
+|                 Belgium|   -898320.79|  463.87|
+|                   Benin|    -14505.47|    7.91|
+|                 Bolivia|    -42694.43|   23.06|
+|  Bosnia and Herzegovina|   -192269.93|   98.89|
+|                Botswana|   -438179.38|  223.90|
+|                  Brazil|   -251791.91|  130.14|
+|                Bulgaria|   -206756.91|  107.67|
+|            Burkina Faso|    -18096.39|    9.57|
+|                 Burundi|     -4962.58|    2.75|
+|                Cambodia|    -30194.26|   15.59|
+|                Cameroon|    -28650.33|   15.37|
+
+``` r
 fct_reorder(gpmdr_slope$country, 
             gpmdr_slope$slope, .desc = TRUE) %>%
   levels() %>%
-  head(30)
+  head(20)
 ```
 
-    ##  [1] "Singapore"        "Norway"           "Hong Kong, China"
-    ##  [4] "Ireland"          "Japan"            "Austria"         
-    ##  [7] "United States"    "Iceland"          "Taiwan"          
-    ## [10] "Netherlands"      "Belgium"          "Denmark"         
-    ## [13] "Italy"            "Finland"          "Canada"          
-    ## [16] "Germany"          "Spain"            "France"          
-    ## [19] "Australia"        "Sweden"           "Oman"            
-    ## [22] "United Kingdom"   "Korea, Rep."      "Greece"          
-    ## [25] "Israel"           "Switzerland"      "Portugal"        
-    ## [28] "Slovenia"         "Puerto Rico"      "Bahrain"
+\[1\] "Singapore" "Norway" "Hong Kong, China" \[4\] "Ireland" "Japan" "Austria"
+\[7\] "United States" "Iceland" "Taiwan"
+\[10\] "Netherlands" "Belgium" "Denmark"
+\[13\] "Italy" "Finland" "Canada"
+\[16\] "Germany" "Spain" "France"
+\[19\] "Australia" "Sweden"
 
-For example: Reorder the factor `continent` based on its number of countries.
+#### Reorder the factor `continent` based on its number of countries.
 
 ``` r
 fct_reorder(gapminder$continent, 
@@ -139,10 +163,10 @@ fct_reorder(gapminder$continent,
 
     ## [1] "Africa"   "Asia"     "Europe"   "Americas" "Oceania"
 
-#### Problem 2 Common Part
+Problem 2 Common Part
+---------------------
 
-Task 2.1
---------
+#### Task 2.1 Explore the effects of `arrange()`
 
 For simplicity, I am using a new dataset obtained from `gpmdr_slope` from Task 1.3 and `gapminder` for the following questions.
 
@@ -157,6 +181,7 @@ gpm_eur <- gpm %>%
   droplevels()
 
 gpm_eur%>%
+  head(20) %>%
   knitr::kable(digits = 2, align ="r", padding = 10 )
 ```
 
@@ -182,36 +207,25 @@ gpm_eur%>%
 |             Netherlands|   -950756.9|  491.29|     Europe|
 |                  Norway|  -1430486.9|  736.16|     Europe|
 |                  Poland|   -313015.2|  162.38|     Europe|
-|                Portugal|   -668146.6|  343.27|     Europe|
-|                 Romania|   -192037.5|  100.70|     Europe|
-|                  Serbia|   -163502.8|   87.30|     Europe|
-|         Slovak Republic|   -353658.4|  183.92|     Europe|
-|                Slovenia|   -656045.2|  338.53|     Europe|
-|                   Spain|   -857599.7|  440.33|     Europe|
-|                  Sweden|   -819287.0|  423.96|     Europe|
-|             Switzerland|   -715956.6|  375.36|     Europe|
-|                  Turkey|   -215742.4|  111.25|     Europe|
-|          United Kingdom|   -777027.8|  402.33|     Europe|
 
 ``` r
 levels(gpm_eur$country)
 ```
 
-    ##  [1] "Albania"                "Austria"               
-    ##  [3] "Belgium"                "Bosnia and Herzegovina"
-    ##  [5] "Bulgaria"               "Croatia"               
-    ##  [7] "Czech Republic"         "Denmark"               
-    ##  [9] "Finland"                "France"                
-    ## [11] "Germany"                "Greece"                
-    ## [13] "Hungary"                "Iceland"               
-    ## [15] "Ireland"                "Italy"                 
-    ## [17] "Montenegro"             "Netherlands"           
-    ## [19] "Norway"                 "Poland"                
-    ## [21] "Portugal"               "Romania"               
-    ## [23] "Serbia"                 "Slovak Republic"       
-    ## [25] "Slovenia"               "Spain"                 
-    ## [27] "Sweden"                 "Switzerland"           
-    ## [29] "Turkey"                 "United Kingdom"
+\[1\] "Albania" "Austria"
+\[3\] "Belgium" "Bosnia and Herzegovina" \[5\] "Bulgaria" "Croatia"
+\[7\] "Czech Republic" "Denmark"
+\[9\] "Finland" "France"
+\[11\] "Germany" "Greece"
+\[13\] "Hungary" "Iceland"
+\[15\] "Ireland" "Italy"
+\[17\] "Montenegro" "Netherlands"
+\[19\] "Norway" "Poland"
+\[21\] "Portugal" "Romania"
+\[23\] "Serbia" "Slovak Republic"
+\[25\] "Slovenia" "Spain"
+\[27\] "Sweden" "Switzerland"
+\[29\] "Turkey" "United Kingdom"
 
 ``` r
 p3 <- ggplot(gpm_eur, aes(x = slope, y = country)) + geom_point() 
@@ -220,41 +234,32 @@ gpm_eur_arrange <-
   gpm_eur %>%
   arrange(slope)
 gpm_eur_arrange %>%
+  head(20)%>%
   knitr::kable(digits = 2, align ="r", padding = 10 )
 ```
 
-|                 country|   intercept|   slope|  continent|
-|-----------------------:|-----------:|-------:|----------:|
-|                 Albania|   -104544.1|   54.46|     Europe|
-|                  Serbia|   -163502.8|   87.30|     Europe|
-|              Montenegro|   -173054.3|   91.06|     Europe|
-|  Bosnia and Herzegovina|   -192269.9|   98.89|     Europe|
-|                 Romania|   -192037.5|  100.70|     Europe|
-|                Bulgaria|   -206756.9|  107.67|     Europe|
-|                  Turkey|   -215742.4|  111.25|     Europe|
-|                  Poland|   -313015.2|  162.38|     Europe|
-|                 Croatia|   -331508.7|  172.19|     Europe|
-|         Slovak Republic|   -353658.4|  183.92|     Europe|
-|                 Hungary|   -354472.5|  184.57|     Europe|
-|          Czech Republic|   -436852.4|  227.72|     Europe|
-|                Slovenia|   -656045.2|  338.53|     Europe|
-|                Portugal|   -668146.6|  343.27|     Europe|
-|             Switzerland|   -715956.6|  375.36|     Europe|
-|                  Greece|   -772269.1|  397.19|     Europe|
-|          United Kingdom|   -777027.8|  402.33|     Europe|
-|                  Sweden|   -819287.0|  423.96|     Europe|
-|                  France|   -847598.5|  437.70|     Europe|
-|                   Spain|   -857599.7|  440.33|     Europe|
-|                 Germany|   -863036.2|  446.37|     Europe|
-|                 Finland|   -886323.5|  456.58|     Europe|
-|                   Italy|   -888466.8|  457.04|     Europe|
-|                 Denmark|   -887732.4|  459.41|     Europe|
-|                 Belgium|   -898320.8|  463.87|     Europe|
-|             Netherlands|   -950756.9|  491.29|     Europe|
-|                 Iceland|   -997466.0|  514.27|     Europe|
-|                 Austria|  -1037774.0|  534.57|     Europe|
-|                 Ireland|  -1141026.5|  584.38|     Europe|
-|                  Norway|  -1430486.9|  736.16|     Europe|
+|                 country|  intercept|   slope|  continent|
+|-----------------------:|----------:|-------:|----------:|
+|                 Albania|  -104544.1|   54.46|     Europe|
+|                  Serbia|  -163502.8|   87.30|     Europe|
+|              Montenegro|  -173054.3|   91.06|     Europe|
+|  Bosnia and Herzegovina|  -192269.9|   98.89|     Europe|
+|                 Romania|  -192037.5|  100.70|     Europe|
+|                Bulgaria|  -206756.9|  107.67|     Europe|
+|                  Turkey|  -215742.4|  111.25|     Europe|
+|                  Poland|  -313015.2|  162.38|     Europe|
+|                 Croatia|  -331508.7|  172.19|     Europe|
+|         Slovak Republic|  -353658.4|  183.92|     Europe|
+|                 Hungary|  -354472.5|  184.57|     Europe|
+|          Czech Republic|  -436852.4|  227.72|     Europe|
+|                Slovenia|  -656045.2|  338.53|     Europe|
+|                Portugal|  -668146.6|  343.27|     Europe|
+|             Switzerland|  -715956.6|  375.36|     Europe|
+|                  Greece|  -772269.1|  397.19|     Europe|
+|          United Kingdom|  -777027.8|  402.33|     Europe|
+|                  Sweden|  -819287.0|  423.96|     Europe|
+|                  France|  -847598.5|  437.70|     Europe|
+|                   Spain|  -857599.7|  440.33|     Europe|
 
 ``` r
 p4 <- ggplot(gpm_eur_arrange, aes(x = slope, y = country)) +
@@ -280,17 +285,18 @@ gpm_arrange_continent <-
   gpm %>%
   group_by(continent) %>%
   arrange(slope, .by_group = TRUE) %>%
-  head(30) %>%
+  head(20) %>%
   knitr::kable(digits = 2, align ="r", padding = 10 )
 ```
 
-Explore the effects of reording a factor and factor reording coupled with arrange().
+#### Task 2.2 Explore the effects of reording a factor and factor reording coupled with `arrange()`
 
 ``` r
 gpm_eur_factor <- gpm_eur %>%
   mutate(country_reorder = fct_reorder(country, slope)) %>%
   dplyr::select(-country) 
 gpm_eur_factor %>%
+  head(20)%>%
   knitr::kable(digits = 2, align ="r", padding = 10 )
 ```
 
@@ -316,56 +322,37 @@ gpm_eur_factor %>%
 |   -950756.9|  491.29|     Europe|             Netherlands|
 |  -1430486.9|  736.16|     Europe|                  Norway|
 |   -313015.2|  162.38|     Europe|                  Poland|
-|   -668146.6|  343.27|     Europe|                Portugal|
-|   -192037.5|  100.70|     Europe|                 Romania|
-|   -163502.8|   87.30|     Europe|                  Serbia|
-|   -353658.4|  183.92|     Europe|         Slovak Republic|
-|   -656045.2|  338.53|     Europe|                Slovenia|
-|   -857599.7|  440.33|     Europe|                   Spain|
-|   -819287.0|  423.96|     Europe|                  Sweden|
-|   -715956.6|  375.36|     Europe|             Switzerland|
-|   -215742.4|  111.25|     Europe|                  Turkey|
-|   -777027.8|  402.33|     Europe|          United Kingdom|
 
 ``` r
 gpm_eur_factor_arrange <- gpm_eur_factor %>%
   arrange(slope) 
 gpm_eur_factor_arrange %>%
+  head(20) %>%
   knitr::kable(digits = 2, align ="r", padding = 10 )
 ```
 
-|   intercept|   slope|  continent|        country\_reorder|
-|-----------:|-------:|----------:|-----------------------:|
-|   -104544.1|   54.46|     Europe|                 Albania|
-|   -163502.8|   87.30|     Europe|                  Serbia|
-|   -173054.3|   91.06|     Europe|              Montenegro|
-|   -192269.9|   98.89|     Europe|  Bosnia and Herzegovina|
-|   -192037.5|  100.70|     Europe|                 Romania|
-|   -206756.9|  107.67|     Europe|                Bulgaria|
-|   -215742.4|  111.25|     Europe|                  Turkey|
-|   -313015.2|  162.38|     Europe|                  Poland|
-|   -331508.7|  172.19|     Europe|                 Croatia|
-|   -353658.4|  183.92|     Europe|         Slovak Republic|
-|   -354472.5|  184.57|     Europe|                 Hungary|
-|   -436852.4|  227.72|     Europe|          Czech Republic|
-|   -656045.2|  338.53|     Europe|                Slovenia|
-|   -668146.6|  343.27|     Europe|                Portugal|
-|   -715956.6|  375.36|     Europe|             Switzerland|
-|   -772269.1|  397.19|     Europe|                  Greece|
-|   -777027.8|  402.33|     Europe|          United Kingdom|
-|   -819287.0|  423.96|     Europe|                  Sweden|
-|   -847598.5|  437.70|     Europe|                  France|
-|   -857599.7|  440.33|     Europe|                   Spain|
-|   -863036.2|  446.37|     Europe|                 Germany|
-|   -886323.5|  456.58|     Europe|                 Finland|
-|   -888466.8|  457.04|     Europe|                   Italy|
-|   -887732.4|  459.41|     Europe|                 Denmark|
-|   -898320.8|  463.87|     Europe|                 Belgium|
-|   -950756.9|  491.29|     Europe|             Netherlands|
-|   -997466.0|  514.27|     Europe|                 Iceland|
-|  -1037774.0|  534.57|     Europe|                 Austria|
-|  -1141026.5|  584.38|     Europe|                 Ireland|
-|  -1430486.9|  736.16|     Europe|                  Norway|
+|  intercept|   slope|  continent|        country\_reorder|
+|----------:|-------:|----------:|-----------------------:|
+|  -104544.1|   54.46|     Europe|                 Albania|
+|  -163502.8|   87.30|     Europe|                  Serbia|
+|  -173054.3|   91.06|     Europe|              Montenegro|
+|  -192269.9|   98.89|     Europe|  Bosnia and Herzegovina|
+|  -192037.5|  100.70|     Europe|                 Romania|
+|  -206756.9|  107.67|     Europe|                Bulgaria|
+|  -215742.4|  111.25|     Europe|                  Turkey|
+|  -313015.2|  162.38|     Europe|                  Poland|
+|  -331508.7|  172.19|     Europe|                 Croatia|
+|  -353658.4|  183.92|     Europe|         Slovak Republic|
+|  -354472.5|  184.57|     Europe|                 Hungary|
+|  -436852.4|  227.72|     Europe|          Czech Republic|
+|  -656045.2|  338.53|     Europe|                Slovenia|
+|  -668146.6|  343.27|     Europe|                Portugal|
+|  -715956.6|  375.36|     Europe|             Switzerland|
+|  -772269.1|  397.19|     Europe|                  Greece|
+|  -777027.8|  402.33|     Europe|          United Kingdom|
+|  -819287.0|  423.96|     Europe|                  Sweden|
+|  -847598.5|  437.70|     Europe|                  France|
+|  -857599.7|  440.33|     Europe|                   Spain|
 
 ``` r
 levels(gpm_eur_factor_arrange$country_reorder)
@@ -401,53 +388,60 @@ The above illustration shows that for our particular usage of `arrange()` functi
 Problem 3: File I/O
 -------------------
 
+#### Task 3.1 CSV Save
+
 For simplicity, I play with the tibble created in the previous questions. I will firstly show the csv.
 
 ``` r
 levels(gpm_eur_factor$country_reorder)
 ```
 
-\[1\] "Albania" "Serbia"
-\[3\] "Montenegro" "Bosnia and Herzegovina" \[5\] "Romania" "Bulgaria"
-\[7\] "Turkey" "Poland"
-\[9\] "Croatia" "Slovak Republic"
-\[11\] "Hungary" "Czech Republic"
-\[13\] "Slovenia" "Portugal"
-\[15\] "Switzerland" "Greece"
-\[17\] "United Kingdom" "Sweden"
-\[19\] "France" "Spain"
-\[21\] "Germany" "Finland"
-\[23\] "Italy" "Denmark"
-\[25\] "Belgium" "Netherlands"
-\[27\] "Iceland" "Austria"
-\[29\] "Ireland" "Norway"
+    ##  [1] "Albania"                "Serbia"                
+    ##  [3] "Montenegro"             "Bosnia and Herzegovina"
+    ##  [5] "Romania"                "Bulgaria"              
+    ##  [7] "Turkey"                 "Poland"                
+    ##  [9] "Croatia"                "Slovak Republic"       
+    ## [11] "Hungary"                "Czech Republic"        
+    ## [13] "Slovenia"               "Portugal"              
+    ## [15] "Switzerland"            "Greece"                
+    ## [17] "United Kingdom"         "Sweden"                
+    ## [19] "France"                 "Spain"                 
+    ## [21] "Germany"                "Finland"               
+    ## [23] "Italy"                  "Denmark"               
+    ## [25] "Belgium"                "Netherlands"           
+    ## [27] "Iceland"                "Austria"               
+    ## [29] "Ireland"                "Norway"
 
 ``` r
-write.csv(gpm_eur_factor, file = "Non-alphabetically_orderedCSV")
-gpm_eur_factor_CSVcopy <- read.csv("Non-alphabetically_orderedCSV")
+?write.csv
+write.csv(gpm_eur_factor, paste(getwd(), "/HW5_files", "Non-alphabetically_orderedCSV.csv", sep = ""))
+gpm_eur_factor_CSVcopy <- read.csv(paste(getwd(), "/HW5_files", "Non-alphabetically_orderedCSV.csv", sep = ""))
 levels(gpm_eur_factor_CSVcopy$country_reorder)
 ```
 
-\[1\] "Albania" "Austria"
-\[3\] "Belgium" "Bosnia and Herzegovina" \[5\] "Bulgaria" "Croatia"
-\[7\] "Czech Republic" "Denmark"
-\[9\] "Finland" "France"
-\[11\] "Germany" "Greece"
-\[13\] "Hungary" "Iceland"
-\[15\] "Ireland" "Italy"
-\[17\] "Montenegro" "Netherlands"
-\[19\] "Norway" "Poland"
-\[21\] "Portugal" "Romania"
-\[23\] "Serbia" "Slovak Republic"
-\[25\] "Slovenia" "Spain"
-\[27\] "Sweden" "Switzerland"
-\[29\] "Turkey" "United Kingdom"
+    ##  [1] "Albania"                "Austria"               
+    ##  [3] "Belgium"                "Bosnia and Herzegovina"
+    ##  [5] "Bulgaria"               "Croatia"               
+    ##  [7] "Czech Republic"         "Denmark"               
+    ##  [9] "Finland"                "France"                
+    ## [11] "Germany"                "Greece"                
+    ## [13] "Hungary"                "Iceland"               
+    ## [15] "Ireland"                "Italy"                 
+    ## [17] "Montenegro"             "Netherlands"           
+    ## [19] "Norway"                 "Poland"                
+    ## [21] "Portugal"               "Romania"               
+    ## [23] "Serbia"                 "Slovak Republic"       
+    ## [25] "Slovenia"               "Spain"                 
+    ## [27] "Sweden"                 "Switzerland"           
+    ## [29] "Turkey"                 "United Kingdom"
 
 It shows that saving as csv does not preserve the factor levels, instead, it automatically ordered in alphabetical order.
 
+#### Task 3.2 RDS Save
+
 ``` r
-saveRDS(gpm_eur_factor, file = "Non-alphabetically_orderedRDS")
-gpm_eur_factor_RDScopy <- readRDS("Non-alphabetically_orderedRDS")
+saveRDS(gpm_eur_factor, paste(getwd(), "/HW5_files", "Non-alphabetically_orderedRDS.rds", sep = ""))
+gpm_eur_factor_RDScopy <- readRDS(paste(getwd(), "/HW5_files", "Non-alphabetically_orderedRDS.rds", sep = ""))
 levels(gpm_eur_factor_RDScopy$country_reorder)
 ```
 
@@ -476,9 +470,11 @@ which( !levels(gpm_eur_factor_RDScopy$country_reorder) ==
 
 It shows that saving as RDS does preserve the factor levels.
 
+#### Task 3.3 dput Save
+
 ``` r
-dput(gpm_eur_factor, file = "Non-alphabetically_ordereddput")
-gpm_eur_factor_dputCopy <- dget("Non-alphabetically_ordereddput")
+dput(gpm_eur_factor, paste(getwd(), "/HW5_files", "NNon-alphabetically_ordereddput", sep = ""))
+gpm_eur_factor_dputCopy <- dget(paste(getwd(), "/HW5_files", "NNon-alphabetically_ordereddput", sep = ""))
 levels(gpm_eur_factor_dputCopy$country_reorder)
 ```
 
@@ -510,7 +506,7 @@ It shows that saving using dput does preserve the factor levels.
 Problem 4: Visualization design
 -------------------------------
 
-#### Plotting the trend of GDP increase per year for countries
+#### Task 4.1 Plotting the trend of GDP increase per year for countries
 
 Before
 
@@ -543,7 +539,7 @@ ggplot(gapminder, aes(x= year, y = gdpPercap, group = country)) +
 
 ![](HW5_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-17-1.png)
 
-#### Jitter plotting the gdpPercap by year.
+#### Task 4.2 Scatterplot gdpPercap vs pop by each continent
 
 Before
 

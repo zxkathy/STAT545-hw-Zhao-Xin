@@ -21,7 +21,7 @@ library(gdata)
 
 ## Problem 1: Factor management
 
-#### Task 1.1: Drop `Oceania`
+#### Task 1.1  Drop `Oceania`
 
 Filter out the continent `Oceania` first in preparation for the following work.
 
@@ -49,7 +49,7 @@ levels(gapmdr_dropLvl$continent)
 ```
 Both functions `fct_drop()` and `droplevels()` can drop unused factor levels, but `fct_drop()` is used for a factor, but `droplevels()` can operate on either a factor or a data frame.
 
-#### Task 1.2: Recorder the levels of `continent`
+#### Task 1.2  Recorder the levels of `continent`
 
 ```{r}
 gapmdr_dropLvl$continent%>%
@@ -77,25 +77,28 @@ p2 <- ggplot(gap_am_2007, aes(x = gdpPercap, y = fct_reorder(country, gdpPercap)
 grid.arrange(p1, p2, ncol=2)
 ```
 
-## Task 1.3 (Extra)
+## Task 1.3  Extra exploration
 Instead of using the default median, I can explore some more, using gapminder data, not the one with dropped levels
 
-For example, reorder the `country` based on its average gdp increase rate across all years available. 
+#### Reorder the `country` based on its average gdp increase rate across all years available. For simplicity, we only display head 20 of the data.
 
-```{r}
+```{r results='asis'}
 gpmdr_slope<- 
   gapminder %>%
   group_by(country) %>% 
   do(fit = lm(gdpPercap ~ year, .)) %>% 
   summarise(country = country, intercept = coef(fit)[1],  slope= coef(fit)[2])
-
+gpmdr_slope %>%
+  head(20) %>%
+  knitr::kable(digits = 2, align ="r", padding = 10 )
+  
 fct_reorder(gpmdr_slope$country, 
             gpmdr_slope$slope, .desc = TRUE) %>%
   levels() %>%
-  head(30)
+  head(20)
 ```
 
-For example: Reorder the factor `continent` based on its number of countries.
+#### Reorder the factor `continent` based on its number of countries.
 
 ```{r}
 fct_reorder(gapminder$continent, 
@@ -104,12 +107,12 @@ fct_reorder(gapminder$continent,
 ```
 
 
-#### Problem 2  Common Part
+## Problem 2  Common Part
 
-## Task 2.1
+#### Task 2.1  Explore the effects of `arrange()`
 For simplicity, I am using a new dataset obtained from `gpmdr_slope` from Task 1.3 and `gapminder` for the following questions.
 
-```{r, fig.width= 12, fig.height=6}
+```{r, fig.width= 12, fig.height=6,  results='asis'}
 gpm <-
   gapminder %>%
   dplyr::select("continent", "country") %>%
@@ -120,6 +123,7 @@ gpm_eur <- gpm %>%
   droplevels()
 
 gpm_eur%>%
+  head(20) %>%
   knitr::kable(digits = 2, align ="r", padding = 10 )
 levels(gpm_eur$country)
 p3 <- ggplot(gpm_eur, aes(x = slope, y = country)) + geom_point() 
@@ -128,6 +132,7 @@ gpm_eur_arrange <-
   gpm_eur %>%
   arrange(slope)
 gpm_eur_arrange %>%
+  head(20)%>%
   knitr::kable(digits = 2, align ="r", padding = 10 )
 p4 <- ggplot(gpm_eur_arrange, aes(x = slope, y = country)) +
   geom_point()
@@ -141,28 +146,30 @@ which(!levels(gpm_eur$country) == levels(gpm_eur_arrange$country))
 ```
 
 I will arrange the slope again, but this time group by `continent`, and see what happens.
-```{r}
+```{r results='asis'}
 gpm_arrange_continent <-
   gpm %>%
   group_by(continent) %>%
   arrange(slope, .by_group = TRUE) %>%
-  head(30) %>%
+  head(20) %>%
   knitr::kable(digits = 2, align ="r", padding = 10 )
 ```
 
 
-Explore the effects of reording a factor and factor reording coupled with arrange().
+#### Task 2.2  Explore the effects of reording a factor and factor reording coupled with `arrange()`
 
 ```{r, fig.width= 12, fig.height=6}
 gpm_eur_factor <- gpm_eur %>%
   mutate(country_reorder = fct_reorder(country, slope)) %>%
   dplyr::select(-country) 
 gpm_eur_factor %>%
+  head(20)%>%
   knitr::kable(digits = 2, align ="r", padding = 10 )
 
 gpm_eur_factor_arrange <- gpm_eur_factor %>%
   arrange(slope) 
 gpm_eur_factor_arrange %>%
+  head(20) %>%
   knitr::kable(digits = 2, align ="r", padding = 10 )
 levels(gpm_eur_factor_arrange$country_reorder)
 
@@ -176,21 +183,25 @@ The above illustration shows that for our particular usage of `arrange()` functi
 
 ## Problem 3: File I/O
 
+#### Task 3.1 CSV Save
+
 For simplicity, I play with the tibble created in the previous questions. I will firstly show the csv.
 
-```{r results='asis'}
+```{r}
 levels(gpm_eur_factor$country_reorder)
-
-write.csv(gpm_eur_factor, file = "Non-alphabetically_orderedCSV")
-gpm_eur_factor_CSVcopy <- read.csv("Non-alphabetically_orderedCSV")
+?write.csv
+write.csv(gpm_eur_factor, paste(getwd(), "/HW5_files", "Non-alphabetically_orderedCSV.csv", sep = ""))
+gpm_eur_factor_CSVcopy <- read.csv(paste(getwd(), "/HW5_files", "Non-alphabetically_orderedCSV.csv", sep = ""))
 levels(gpm_eur_factor_CSVcopy$country_reorder)
 ```
 
 It shows that saving as csv does not preserve the factor levels, instead, it automatically ordered in alphabetical order. 
 
+#### Task 3.2 RDS Save
+
 ```{r}
-saveRDS(gpm_eur_factor, file = "Non-alphabetically_orderedRDS")
-gpm_eur_factor_RDScopy <- readRDS("Non-alphabetically_orderedRDS")
+saveRDS(gpm_eur_factor, paste(getwd(), "/HW5_files", "Non-alphabetically_orderedRDS.rds", sep = ""))
+gpm_eur_factor_RDScopy <- readRDS(paste(getwd(), "/HW5_files", "Non-alphabetically_orderedRDS.rds", sep = ""))
 levels(gpm_eur_factor_RDScopy$country_reorder)
 which( !levels(gpm_eur_factor_RDScopy$country_reorder) == 
          levels(gpm_eur_factor$country_reorder))
@@ -198,9 +209,11 @@ which( !levels(gpm_eur_factor_RDScopy$country_reorder) ==
 
 It shows that saving as RDS does preserve the factor levels.
 
+#### Task 3.3 dput Save
+
 ```{r}
-dput(gpm_eur_factor, file = "Non-alphabetically_ordereddput")
-gpm_eur_factor_dputCopy <- dget("Non-alphabetically_ordereddput")
+dput(gpm_eur_factor, paste(getwd(), "/HW5_files", "NNon-alphabetically_ordereddput", sep = ""))
+gpm_eur_factor_dputCopy <- dget(paste(getwd(), "/HW5_files", "NNon-alphabetically_ordereddput", sep = ""))
 levels(gpm_eur_factor_dputCopy$country_reorder)
 which( !levels(gpm_eur_factor_dputCopy$country_reorder) == 
          levels(gpm_eur_factor$country_reorder))
@@ -210,8 +223,7 @@ It shows that saving using dput does preserve the factor levels.
 
 ## Problem 4: Visualization design
 
-
-#### Plotting the trend of GDP increase per year for countries
+#### Task 4.1  Plotting the trend of GDP increase per year for countries
 
 Before
 ```{r, fig.width= 7, fig.height=5}
@@ -236,7 +248,7 @@ ggplot(gapminder, aes(x= year, y = gdpPercap, group = country)) +
   ggtitle("GDP Per Capita trend as year increases")
 ```
 
-#### Jitter plotting the gdpPercap by year. 
+#### Task 4.2  Scatterplot gdpPercap vs pop by each continent 
 
 Before
 ```{r, fig.width= 12, fig.height=8}
