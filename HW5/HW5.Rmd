@@ -297,27 +297,38 @@ favFood <- data.frame(
   stringsAsFactors=TRUE)
 
 slope_small <-
-  gpmdr_slope %>%
+  gapminder %>%
   filter(country %in% c("Germany", "Japan", "Korea, Rep.", 
-                        "China", "United States", "France")) %>%
+                        "China", "United States", "France"), 
+         year %in% c(2002,2007)) %>%
   droplevels()%>%
-  left_join(., favFood, by = "country") 
+  left_join(., favFood, by = "country") %>%
+  arrange(lifeExp)
 
 levels(slope_small$country)
 levels(slope_small$food) 
 ```
 
-It can been seen that both factor `country` and `food` are arranged alphabetically, and not matching each other. Let's reorder them and let them match with each order. 
-```{r}
-fct_relevel(slope_small$food, as.character(slope_small$food))
-fct_relevel(slope_small$country, as.character(slope_small$country))
+It can been seen that both factor `country` and `food` are arranged alphabetically, and not matching each other. Let's firstly extract the unique matching and then reorder them and let them match with each order. 
+
+```{r results='asis'}
+uniq_ss <- slope_small %>%
+  dplyr::select(country, food) %>%
+  unique()
+unique %>% 
+    knitr::kable(digits = 2, align ="r", padding = 10 )
+
+slope_small$food <- 
+  slope_small$food %>% fct_relevel(as.character(uniq_ss$food))
+
+slope_small$country <- 
+  slope_small$country %>% fct_relevel(as.character(uniq_ss$country)) 
 ```
 
 Now they are mapping to each other.
 
 ```{r}
-levels(slope_small$country) 
-levels(slope_small$food)
+str(slope_small)
 ```
 
 
