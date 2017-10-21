@@ -414,8 +414,8 @@ levels(gpm_eur_factor$country_reorder)
 
 ``` r
 ?write.csv
-write.csv(gpm_eur_factor, paste(getwd(), "/HW5_files", "Non-alphabetically_orderedCSV.csv", sep = ""))
-gpm_eur_factor_CSVcopy <- read.csv(paste(getwd(), "/HW5_files", "Non-alphabetically_orderedCSV.csv", sep = ""))
+write.csv(gpm_eur_factor, paste(getwd(), "/HW5_files/", "Non-alphabetically_orderedCSV.csv", sep = ""))
+gpm_eur_factor_CSVcopy <- read.csv(paste(getwd(), "/HW5_files/", "Non-alphabetically_orderedCSV.csv", sep = ""))
 levels(gpm_eur_factor_CSVcopy$country_reorder)
 ```
 
@@ -440,8 +440,8 @@ It shows that saving as csv does not preserve the factor levels, instead, it aut
 #### Task 3.2 RDS Save
 
 ``` r
-saveRDS(gpm_eur_factor, paste(getwd(), "/HW5_files", "Non-alphabetically_orderedRDS.rds", sep = ""))
-gpm_eur_factor_RDScopy <- readRDS(paste(getwd(), "/HW5_files", "Non-alphabetically_orderedRDS.rds", sep = ""))
+saveRDS(gpm_eur_factor, paste(getwd(), "/HW5_files/", "Non-alphabetically_orderedRDS.rds", sep = ""))
+gpm_eur_factor_RDScopy <- readRDS(paste(getwd(), "/HW5_files/", "Non-alphabetically_orderedRDS.rds", sep = ""))
 levels(gpm_eur_factor_RDScopy$country_reorder)
 ```
 
@@ -473,8 +473,8 @@ It shows that saving as RDS does preserve the factor levels.
 #### Task 3.3 dput Save
 
 ``` r
-dput(gpm_eur_factor, paste(getwd(), "/HW5_files", "NNon-alphabetically_ordereddput", sep = ""))
-gpm_eur_factor_dputCopy <- dget(paste(getwd(), "/HW5_files", "NNon-alphabetically_ordereddput", sep = ""))
+dput(gpm_eur_factor, paste(getwd(), "/HW5_files/", "NNon-alphabetically_ordereddput", sep = ""))
+gpm_eur_factor_dputCopy <- dget(paste(getwd(), "/HW5_files/", "NNon-alphabetically_ordereddput", sep = ""))
 levels(gpm_eur_factor_dputCopy$country_reorder)
 ```
 
