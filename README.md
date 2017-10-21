@@ -1,7 +1,7 @@
 # STAT545-hw-Zhao-Xin
 
 
-## What key courses have I taken? 
+## What homework have I done? 
 | **Homework No.** |     **Description**    | **Comment** |
 |----------------|------------------------|----------------|
 | [HW 1](https://github.com/zxkathy/STAT545-hw01-Zhao-Xin/blob/master/README.md)       | Edit README.md and use R Markdown   | As the peer review and comments are in another repo, this link might not be accessible for those who are not my collaborators         |
